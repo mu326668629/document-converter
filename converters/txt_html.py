@@ -1,0 +1,23 @@
+import sys
+sys.path.append('..')
+
+from general import GeneralConverter
+from file_manager import FileManager
+import markdown2
+import io
+
+class TxtHtml(GeneralConverter):
+    """
+    This class is for Txt-Html conversion.
+    """
+    def __init__(self, *input_files):
+        self.initial_format = 'txt'
+        self.final_format = 'html'
+        self.file_batch = [input_file for input_file in input_files]
+
+    def convert(self, f):
+        filemanager = FileManager(f)
+        input_stream = filemanager.get_stream()
+        output_stream = markdown2.markdown(input_stream)
+        output_file = filemanager.write(self.final_format, output_stream)
+        return output_file
