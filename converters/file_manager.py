@@ -1,6 +1,7 @@
 import os
 import mimetypes
 import magic
+import re
 import io
 
 class FileManager:
@@ -8,7 +9,8 @@ class FileManager:
     def __init__(self, input_file_path, output_file_path = None):
         self.input_file_path = input_file_path
         if not output_file_path:
-            self.output_file_path = os.path.dirname(os.path.realpath(input_file_path))
+            self.output_file_path = os.path.dirname(
+                os.path.realpath(input_file_path))
         else:
             self.output_file_path = output_file_path
         
@@ -35,8 +37,8 @@ class FileManager:
         splitext_output = os.path.splitext(file_name)
         return '.'.join([splitext_output[0], output_extension])
 
-    def get_extension(self, file_path):
-        mime_type = get_mime_type(file_path)
+    def get_extension(self):
+        mime_type = self.get_mime_type()
         if re.compile('.*plain.*', re.IGNORECASE).match(mime_type) or re.compile('.*pretty.*', re.IGNORECASE).match(mime_type):
             return 'txt'
         elif re.compile('.*html.*', re.IGNORECASE).match(mime_type):
@@ -44,15 +46,15 @@ class FileManager:
         elif re.compile('.*pdf.*', re.IGNORECASE).match(mime_type):
             return 'pdf'
 
-    def get_mime_type(self, original_file_path):
+    def get_mime_type(self):
         try:
             mime_type = magic.from_file(
-            original_file_path.encode('utf-8'), mime=True)
+                self.input_file_path.encode('utf-8'), mime=True)
         except IOError, e:
             print e
             mime_type = None
         if mime_type is None:
             mime_type, mime_encoding = mimetypes.guess_type(
-                original_file_path.encode('utf-8'), strict=True)
+                self.input_file_path.encode('utf-8'), strict=True)
             # accepts unicode as well. For consistency using utf
-            return mime_type
+        return mime_type

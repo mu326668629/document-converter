@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function timedText()
+{
+var x=document.getElementById('txt');
+var t1=setTimeout(function(){x.value="2 seconds"},2000);
+var t2=setTimeout(function(){x.value="4 seconds"},4000);
+var t3=setTimeout(function(){x.value="6 seconds"},6000);
+}
+</script>
+</head>
+
+<body>
+<form>
+<input type="button" value="Display timed text!" onclick="timedText()" />
+<input type="text" id="txt" />
+</form>
+<p>Click on the button above. The input field will tell you when two, four, and six seconds have passed.</p>
+</body>
+
+</html>
