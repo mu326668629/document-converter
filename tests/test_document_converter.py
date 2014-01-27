@@ -1,7 +1,6 @@
 import sys
-sys.path.append('..')
 sys.path.append('../converters')
-sys.path.append('test_files')
+sys.path.append('test_files/')
 
 
 import unittest
