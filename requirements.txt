@@ -2,4 +2,4 @@ markdown2
 html2text
 beautifulsoup4
 python-magic
-python-mimetype
+mime
