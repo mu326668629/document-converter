@@ -3,3 +3,4 @@ html2text
 beautifulsoup4
 python-magic
 mime
+xhtml2pdf
