@@ -1,5 +1,5 @@
 import sys
-sys.path.append('..')
+sys.path.insert(0, '..')
 
 from general import GeneralConverter
 from xhtml2pdf import pisa
@@ -11,21 +11,20 @@ class HtmlPdf(GeneralConverter):
     """
     This class is for Html-Pdf conversion.
     """
-    def __init__(self, input_file_paths=[]):
+    def __init__(self, input_file_objects=[]):
         self.initial_format = 'html'
         self.final_format = 'pdf'
-        self.file_batch = input_file_paths
+        self.file_batch = input_file_objects
         
-    def _single_convert(self, input_file_path):
-        filemanager = FileManager(input_file_path)
+    def _single_convert(self, input_file_object):
         final_format = self.final_format
-        input_file = filemanager.input_file_exists()
-        if input_file:
-            bytestream = filemanager.get_stream()
+        if input_file_object.get_input_file_object():
+            bytestream = input_file_object.get_stream()
             soup = BeautifulSoup(bytestream)
+            [s.extract() for s in soup('script')]
             bytestream = unicode(soup)
-            output_file_name = filemanager._get_resultant_file_name(
-                final_format)
+            output_file_name = input_file_object._get_resultant_file_name(final_format)
             output_file = io.open(output_file_name, 'w+b')
             pisa.CreatePDF(bytestream, dest=output_file)
-            return output_file_name
+            if output_file_name:
+                return FileManager(output_file_name)

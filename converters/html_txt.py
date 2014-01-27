@@ -1,5 +1,5 @@
 import sys
-sys.path.append('..')
+sys.path.insert(0, '..')
 
 from general import GeneralConverter
 from html2text import html2text
@@ -15,14 +15,15 @@ class HtmlTxt(GeneralConverter):
         self.final_format = 'txt'
         self.file_batch = input_file_paths
 
-    def _single_convert(self, input_file):
+    def _single_convert(self, input_file_object):
         final_format = self.final_format
-        filemanager = FileManager(input_file)
-        if filemanager.input_file_exists():
+        if input_file_object.get_input_file_object():
             output_extension = final_format
-            bytestream = filemanager.get_stream()
+            bytestream = input_file_object.get_stream()
             soup = BeautifulSoup(bytestream)
-            bytestream = str(soup)
+            [s.extract() for s in soup('script')]
+            bytestream = unicode(soup)
             outputstream = html2text(bytestream)
-            output_file = filemanager.write(output_extension, outputstream)
-            return output_file
+            output_file = input_file_object.write(output_extension, outputstream)
+            if output_file:
+                return FileManager(output_file)

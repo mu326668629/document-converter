@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function timedText()
+{
+var x=document.getElementById('txt');
+var t1=setTimeout(function(){x.value="2 seconds"},2000);
+var t2=setTimeout(function(){x.value="4 seconds"},4000);
+var t3=setTimeout(function(){x.value="6 seconds"},6000);
+}
+</script>
+</head>
+
+<body>
+<form>
+<input type="button" value="Display timed text!" onclick="timedText()" />
+<input type="text" id="txt" />
+</form>
+<p>Click on the button above. The input field will tell you when two, four, and six seconds have passed.</p>
+</body>
+
+</html>
+<!DOCTYPE html>
+<html>
+<head><script>
+
+function setCookie(cname,cvalue,exdays)
+{
+var d = new Date();
+d.setTime(d.getTime()+(exdays*24*60*60*1000));
+var expires = "expires="+d.toGMTString();
+document.cookie = cname+"="+cvalue+"; "+expires;
+}
+
+function getCookie(cname)
+{
+var name = cname + "=";
+var ca = document.cookie.split(';');
+for(var i=0; i<ca.length; i++) 
+  {
+  var c = ca[i].trim();
+  if (c.indexOf(name)==0) return c.substring(name.length,c.length);
+  }
+return "";
+}
+
+function checkCookie()
+{
+var user=getCookie("username");
+if (user!="")
+  {
+  alert("Welcome again " + user);
+  }
+else 
+  {
+  user = prompt("Please enter your name:","");
+  if (user!="" && user!=null)
+    {
+    setCookie("username",user,30);
+    }
+  }
+}
+
+</script></head>
+
+<body onload="checkCookie()"></body>
+<!DOCTYPE html>
+<html>
+<head><script>
+
+function setCookie(cname,cvalue,exdays)
+{
+var d = new Date();
+d.setTime(d.getTime()+(exdays*24*60*60*1000));
+var expires = "expires="+d.toGMTString();
+document.cookie = cname+"="+cvalue+"; "+expires;
+}
+
+function getCookie(cname)
+{
+var name = cname + "=";
+var ca = document.cookie.split(';');
+for(var i=0; i<ca.length; i++) 
+  {
+  var c = ca[i].trim();
+  if (c.indexOf(name)==0) return c.substring(name.length,c.length);
+  }
+return "";
+}
+
+function checkCookie()
+{
+var user=getCookie("username");
+if (user!="")
+  {
+  alert("Welcome again " + user);
+  }
+else 
+  {
+  user = prompt("Please enter your name:","");
+  if (user!="" && user!=null)
+    {
+    setCookie("username",user,30);
+    }
+  }
+}
+
+</script></head>
+
+<body onload="checkCookie()"></body>
+</html>
+<!DOCTYPE html>
+<html>
+<head><script>
+
+function setCookie(cname,cvalue,exdays)
+{
+var d = new Date();
+d.setTime(d.getTime()+(exdays*24*60*60*1000));
+var expires = "expires="+d.toGMTString();
+document.cookie = cname+"="+cvalue+"; "+expires;
+}
+
+function getCookie(cname)
+{
+var name = cname + "=";
+var ca = document.cookie.split(';');
+for(var i=0; i<ca.length; i++) 
+  {
+  var c = ca[i].trim();
+  if (c.indexOf(name)==0) return c.substring(name.length,c.length);
+  }
+return "";
+}
+
+function checkCookie()
+{
+var user=getCookie("username");
+if (user!="")
+  {
+  alert("Welcome again " + user);
+  }
+else 
+  {
+  user = prompt("Please enter your name:","");
+  if (user!="" && user!=null)
+    {
+    setCookie("username",user,30);
+    }
+  }
+}
+
+</script></head>
+
+<body onload="checkCookie()"></body>
+</html>
+

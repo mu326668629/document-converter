@@ -1,21 +1,27 @@
 import sys
-sys.path.append('../converters')
-sys.path.append('test_files/')
-
+sys.path.append('..')
+sys.path.append('../..')
 
 import unittest
 
 from document_converter import convert
+from file_manager import FileManager
 
 class ConvertTests(unittest.TestCase):
     def test1_converttest(self):
-        #Note: test4.html contains javascript so this test also demonstrates
-        #stripping of <script> elements.
-        self.failUnless(
-            convert(['test1.html', 'test2.html', 'test3.html', 'test4.html'],
-                    ['pdf', 'txt']) ==
-            [['test1.pdf', 'test2.pdf', 'test3.pdf', 'test4.pdf'], 
-             ['test1.txt', 'test2.txt', 'test3.txt', 'test4.txt']])
+        file1 = FileManager('test_files/test1.html')
+        file2 = FileManager('test_files/test2.html')
+        file3 = FileManager('test_files/test3.html')
+        file4 = FileManager('test_files/test4.html')
+        convert([file1, file2, file3, file4], ['pdf', 'txt'])
+
+        self.failUnless(open('test_files/test1.pdf'))
+        self.failUnless(open('test_files/test2.pdf'))
+        self.failUnless(open('test_files/test3.pdf'))
+        self.failUnless(open('test_files/test4.pdf'))
+
+
+
 
 
 def main():

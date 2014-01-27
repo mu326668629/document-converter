@@ -1,5 +1,5 @@
 import sys
-sys.path.append('..')
+sys.path.insert(0, '..')
 
 from general import GeneralConverter
 from file_manager import FileManager
@@ -15,9 +15,9 @@ class TxtHtml(GeneralConverter):
         self.final_format = 'html'
         self.file_batch = input_file_paths
 
-    def _single_convert(self, input_file):
-        filemanager = FileManager(input_file)
-        input_stream = filemanager.get_stream()
+    def _single_convert(self, input_file_object):
+        input_stream = input_file_object.get_stream()
         output_stream = markdown2.markdown(input_stream)
-        output_file = filemanager.write(self.final_format, output_stream)
-        return output_file
+        output_file = input_file_object.write(self.final_format, output_stream)
+        if output_file:
+            return FileManager(output_file)

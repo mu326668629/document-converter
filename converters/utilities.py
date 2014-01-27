@@ -34,6 +34,5 @@ def class_selector(input_format, output_format):
     return result
 
 
-def get_input_format(input_files):
-    filemanager = FileManager(input_files[0])
-    return filemanager.get_extension()
+def get_input_format(input_files_objects):
+    return input_files_objects[0].get_extension()

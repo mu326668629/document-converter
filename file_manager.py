@@ -6,7 +6,7 @@ import io
 
 class FileManager:
 
-    def __init__(self, input_file_path, output_file_path = None):
+    def __init__(self, input_file_path, output_file_path = ''):
         self.input_file_path = input_file_path
         if not output_file_path:
             self.output_file_path = os.path.dirname(
@@ -14,28 +14,30 @@ class FileManager:
         else:
             self.output_file_path = output_file_path
         
-    def input_file_exists(self):
+    def get_input_file_object(self):
         input_file_path = self.input_file_path
         try:
-            file_object = open(input_file_path)
+            file_object = io.open(input_file_path)
         except IOError:
             file_object = None
         return file_object
 
     def get_stream(self):
-        if self.input_file_exists:
+        if self.get_input_file_object:
             return io.open(self.input_file_path).read()
 
     def write(self, output_extension, stream):
-        output_file = self._get_resultant_file_name(output_extension)
-        with io.open(output_file, 'w+') as f:
+        output_file_name = self._get_resultant_file_name(output_extension)
+        output_file_dir = os.path.join(self.output_file_path, output_file_name)
+        with io.open(output_file_dir, 'w+') as f:
             f.write(stream)
-        return output_file
+            return output_file_dir
 
     def _get_resultant_file_name(self, output_extension):
         file_name = os.path.basename(self.input_file_path)
         splitext_output = os.path.splitext(file_name)
-        return '.'.join([splitext_output[0], output_extension])
+        output_file_name = os.path.join(self.output_file_path, splitext_output[0])
+        return '.'.join([output_file_name, output_extension])
 
     def get_extension(self):
         mime_type = self.get_mime_type()
