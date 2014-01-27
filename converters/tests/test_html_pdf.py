@@ -13,27 +13,23 @@ class HtmlPdfTests(unittest.TestCase):
         file1 = FileManager('test_files/test1.html')
         file2 = FileManager('test_files/test2.html')
         file3 = FileManager('test_files/test3.html')
-        file4 = FileManager('test_files/test4.html')
 
-        test = HtmlPdf([file1, file2, file3, file4])
+        test = HtmlPdf([file1, file2, file3])
         test.convert()
         self.failUnless(open('test_files/test1.pdf'))
         self.failUnless(open('test_files/test2.pdf'))
         self.failUnless(open('test_files/test3.pdf'))
-        self.failUnless(open('test_files/test4.pdf'))
 
     def test2_htmlpdf2(self):
         file1 = FileManager('test_files/test1.html', '.')
         file2 = FileManager('test_files/test2.html', '.')
         file3 = FileManager('test_files/test3.html', '.')
-        file4 = FileManager('test_files/test4.html', '.')
 
         test = HtmlPdf([file1, file2, file3])
         test.convert()
         self.failUnless(open('test1.pdf'))
         self.failUnless(open('test2.pdf'))
         self.failUnless(open('test3.pdf'))
-        self.failUnless(open('test4.pdf'))
 
 def main():
     unittest.main()
