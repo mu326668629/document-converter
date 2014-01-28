@@ -1,5 +1,5 @@
 import sys
-sys.path.insert(0, 'converters/')
+sys.path.append('converters/')
 
 from general import GeneralConverter
 from utilities import get_input_format, class_selector
@@ -13,5 +13,6 @@ def convert(input_files_objects, output_formats):
     for converter_list in converters:
         for converter, expression in converter_list:
             obj = converter(input_files_objects)
+            input_files_objects = obj.convert()
             result.append(obj.convert())
     return result

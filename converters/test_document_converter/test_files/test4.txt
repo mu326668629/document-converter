@@ -1,3 +1,0 @@
-Click on the button above. The input field will tell you when two, four, and
-six seconds have passed.
-
