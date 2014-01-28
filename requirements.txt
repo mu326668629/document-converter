@@ -3,3 +3,4 @@ html2text
 xhtml2pdf
 python-magic
 beautifulsoup4
+requests
