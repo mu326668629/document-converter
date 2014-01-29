@@ -12,14 +12,17 @@ MIME_TO_EXTENSION = {'text/html': 'html',
                      }
 
 class FileManager:
-
-    def __init__(self, input_file_path, output_file_path = ''):
+    def __init__(self, input_file_path, output_file_path = '', converted = False):
         self.input_file_path = input_file_path
         if not output_file_path:
             self.output_file_path = os.path.dirname(
                 os.path.realpath(input_file_path))
         else:
             self.output_file_path = output_file_path
+        self.converted = converted
+
+    def conversion_status(self):
+        return self.converted
         
     def get_input_file_object(self):
         input_file_path = self.input_file_path
@@ -54,13 +57,6 @@ class FileManager:
             if extensions:
                 extension = extensions[0][1:]
         return extension
-
-        # if re.compile('.*html.*', re.IGNORECASE).match(mime_type):
-        #     return 'html'
-        # elif re.compile('.*pdf.*', re.IGNORECASE).match(mime_type):
-        #     return 'pdf'
-        # elif re.compile('.*plain.*', re.IGNORECASE).match(mime_type) or re.compile('.*pretty.*', re.IGNORECASE).match(mime_type) or re.compile('.*text.*', re.IGNORECASE).match(mime_type):
-        #     return 'txt'
 
     def get_mime_type(self):
         try:

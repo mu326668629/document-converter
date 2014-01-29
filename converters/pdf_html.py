@@ -26,5 +26,6 @@ class PdfHtml(GeneralConverter):
             output_file = os.path.join(os.path.basename(os.path.dirname(temp_output_file)), os.path.basename(temp_output_file))
             os.system('pdf2htmlEX %s %s'%(input_file, output_file))
             if output_file_name:
-                return FileManager(output_file_name)
+                input_file_object.converted = True
+                return input_file_object
 

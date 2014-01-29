@@ -30,4 +30,5 @@ class HtmlTxt(GeneralConverter):
             outputstream = h.handle(bytestream)
             output_file = input_file_object.write(output_extension, outputstream)
             if output_file:
-                return FileManager(output_file)
+                input_file_object.converted = True
+                return input_file_object
