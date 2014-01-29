@@ -28,10 +28,9 @@ class FileManager:
 
     def write(self, output_extension, stream):
         output_file_name = self._get_resultant_file_name(output_extension)
-        output_file = os.path.join(self.output_file_path, output_file_name)
-        with io.open(output_file, 'w+') as f:
+        with io.open(output_file_name, 'w+') as f:
             f.write(stream)
-            return output_file
+            return output_file_name
 
     def _get_resultant_file_name(self, output_extension):
         file_name = os.path.basename(self.input_file_path)
