@@ -41,7 +41,7 @@ class FileManager:
 
     def get_extension(self):
         mime_type = self.get_mime_type()
-        if re.compile('.*plain.*', re.IGNORECASE).match(mime_type) or re.compile('.*pretty.*', re.IGNORECASE).match(mime_type):
+        if re.compile('.*plain.*', re.IGNORECASE).match(mime_type) or re.compile('.*pretty.*', re.IGNORECASE).match(mime_type) or re.compile('.*text.*', re.IGNORECASE).match(mime_type):
             return 'txt'
         elif re.compile('.*html.*', re.IGNORECASE).match(mime_type):
             return 'html'
