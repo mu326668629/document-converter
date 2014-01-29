@@ -12,6 +12,7 @@ def convert(input_files_objects, output_formats):
     result = []
     for converter_list in converters:
         for converter, expression in converter_list:
+            print converter
             obj = converter(input_files_objects)
             input_files_objects = obj.convert()
             result.append(obj.convert())

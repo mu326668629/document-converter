@@ -4,6 +4,13 @@ import magic
 import re
 import io
 
+
+MIME_TO_EXTENSION = {'text/html': 'html',
+                     'application/pdf': 'pdf',
+                     'text/plain': 'txt', 
+                     'application/msword': 'doc',
+                     }
+
 class FileManager:
 
     def __init__(self, input_file_path, output_file_path = ''):
@@ -40,12 +47,20 @@ class FileManager:
 
     def get_extension(self):
         mime_type = self.get_mime_type()
-        if re.compile('.*plain.*', re.IGNORECASE).match(mime_type) or re.compile('.*pretty.*', re.IGNORECASE).match(mime_type) or re.compile('.*text.*', re.IGNORECASE).match(mime_type):
-            return 'txt'
-        elif re.compile('.*html.*', re.IGNORECASE).match(mime_type):
-            return 'html'
-        elif re.compile('.*pdf.*', re.IGNORECASE).match(mime_type):
-            return 'pdf'
+        extension = MIME_TO_EXTENSION.get(mime_type)
+        if not extension:
+            expression = re.compile('\.\w+$')
+            extensions = expression.findall(self.input_file_path)
+            if extensions:
+                extension = extensions[0][1:]
+        return extension
+
+        # if re.compile('.*html.*', re.IGNORECASE).match(mime_type):
+        #     return 'html'
+        # elif re.compile('.*pdf.*', re.IGNORECASE).match(mime_type):
+        #     return 'pdf'
+        # elif re.compile('.*plain.*', re.IGNORECASE).match(mime_type) or re.compile('.*pretty.*', re.IGNORECASE).match(mime_type) or re.compile('.*text.*', re.IGNORECASE).match(mime_type):
+        #     return 'txt'
 
     def get_mime_type(self):
         try:
