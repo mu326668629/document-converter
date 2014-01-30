@@ -53,26 +53,3 @@ class FileManager:
         splitext_output = os.path.splitext(file_name)
         output_file_name = os.path.join(self.output_file_dir, splitext_output[0])
         return '.'.join([output_file_name, output_extension])
-
-    def get_extension(self):
-        mime_type = self.get_mime_type()
-        extension = MIME_TO_EXTENSION.get(mime_type)
-        if not extension:
-            expression = re.compile('\.\w+$')
-            extensions = expression.findall(self.input_file_path)
-            if extensions:
-                extension = extensions[0][1:]
-        return extension
-
-    def get_mime_type(self):
-        try:
-            mime_type = magic.from_file(
-                self.input_file_path.encode('utf-8'), mime=True)
-        except IOError, e:
-            print e
-            mime_type = None
-        if mime_type is None:
-            mime_type, mime_encoding = mimetypes.guess_type(
-                self.input_file_path.encode('utf-8'), strict=True)
-            # accepts unicode as well. For consistency using utf
-        return mime_type

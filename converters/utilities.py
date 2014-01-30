@@ -1,11 +1,13 @@
+import sys
+sys.path.append('..')
+
 from html_pdf import HtmlPdf
 from html_txt import HtmlTxt
 from pdf_html import PdfHtml
 from txt_html import TxtHtml
 from file_manager import FileManager
 import re
-import magic
-import mimetypes
+
 
 AVAILABLE_FORMATS = ['pdf', 'html', 'txt']
 
@@ -32,7 +34,3 @@ def class_selector(input_format, output_format):
             else:
                 result.append(class_selector(input_format_c, output_format)[0])
     return result
-
-
-def get_input_format(input_files_objects):
-    return input_files_objects[0].get_extension()
