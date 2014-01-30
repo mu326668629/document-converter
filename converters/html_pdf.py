@@ -23,9 +23,9 @@ class HtmlPdf(GeneralConverter):
             soup = BeautifulSoup(bytestream)
             [s.extract() for s in soup('script')]
             bytestream = unicode(soup)
-            output_file_name = input_file_object._get_resultant_file_name(final_format)
+            output_file_name = input_file_object.get_output_file_path(final_format)
             output_file = io.open(output_file_name, 'w+b')
             pisa.CreatePDF(bytestream, dest=output_file)
             if output_file_name:
                 input_file_object.converted = True
-                return input_file_object
+                return (input_file_object, input_file_object.get_output_file_path('pdf'))

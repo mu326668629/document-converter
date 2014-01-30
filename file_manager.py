@@ -22,7 +22,7 @@ class FileManager:
         self.converted = converted
 
     def conversion_status(self):
-        return self.converted
+        return self.converted == True
         
     def get_input_file_object(self):
         input_file_path = self.input_file_path
@@ -37,12 +37,12 @@ class FileManager:
             return io.open(self.input_file_path).read()
 
     def write(self, output_extension, stream):
-        output_file_name = self._get_resultant_file_name(output_extension)
+        output_file_name = self.get_output_file_path(output_extension)
         with io.open(output_file_name, 'w+') as f:
             f.write(stream)
             return output_file_name
 
-    def _get_resultant_file_name(self, output_extension):
+    def get_output_file_path(self, output_extension):
         file_name = os.path.basename(self.input_file_path)
         splitext_output = os.path.splitext(file_name)
         output_file_name = os.path.join(self.output_file_path, splitext_output[0])
