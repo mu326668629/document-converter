@@ -21,7 +21,7 @@ class FileManager:
             self.output_file_path = output_file_path
         self.converted = converted
 
-    def conversion_status(self):
+    def is_converted(self):
         return self.converted == True
         
     def get_input_file_object(self):
