@@ -7,7 +7,7 @@ from utils import get_file_extension
 
 def convert(input_files_objects, output_formats):
     sample_input_file = input_files_objects[0].input_file_path
-    input_format = get_file_oextension(sample_input_file)
+    input_format = get_file_extension(sample_input_file)
     converters = [class_selector(input_format, output_format)
                   for output_format in output_formats]
     result = []
