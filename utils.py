@@ -45,7 +45,7 @@ def download_url(url, destination_dir, timestamp = True):
                 
     return local_filename
 
-def get_extension(file_path):
+def get_file_extension(file_path):
     mime_type = get_mime_type(file_path)
     extension = MIME_TO_EXTENSION.get(mime_type)
     if not extension:

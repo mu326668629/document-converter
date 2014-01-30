@@ -4,13 +4,6 @@ import magic
 import re
 import io
 
-
-MIME_TO_EXTENSION = {'text/html': 'html',
-                     'application/pdf': 'pdf',
-                     'text/plain': 'txt', 
-                     'application/msword': 'doc',
-                     }
-
 class FileManager:
     def __init__(self, input_file_path, output_file_dir = '', converted = False, output_file_path = None):
         self.input_file_path = input_file_path
