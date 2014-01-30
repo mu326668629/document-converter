@@ -20,13 +20,13 @@ class PdfHtml(GeneralConverter):
     def _single_convert(self, input_file_object):
         input_file = input_file_object.input_file_path
         if input_file:
-            output_file_name = input_file_object.get_output_file_path(self.final_format)
+            output_file_name = input_file_object.set_output_file_path(self.final_format)
             output_file_dir = os.path.basename(os.path.dirname(output_file_name))
             temp_output_file = os.path.join(output_file_dir, output_file_name)
             output_file = os.path.join(os.path.basename(os.path.dirname(temp_output_file)), os.path.basename(temp_output_file))
             os.system('pdf2htmlEX %s %s'%(input_file, output_file))
             if output_file_name:
                 input_file_object.converted = True
-                input_file_object.output_file_path = input_file_object.get_output_file_path('html')
+                input_file_object.output_file_path = input_file_object.set_output_file_path('html')
                 return input_file_object
 

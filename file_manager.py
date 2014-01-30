@@ -40,12 +40,15 @@ class FileManager:
             return io.open(self.input_file_path).read()
 
     def write(self, output_extension, stream):
-        output_file_name = self.get_output_file_path(output_extension)
+        output_file_name = self.set_output_file_path(output_extension)
         with io.open(output_file_name, 'w+') as f:
             f.write(stream)
             return output_file_name
 
-    def get_output_file_path(self, output_extension):
+    def get_output_file_path(self):
+        return self.output_file_path
+
+    def set_output_file_path(self, output_extension):
         file_name = os.path.basename(self.input_file_path)
         splitext_output = os.path.splitext(file_name)
         output_file_name = os.path.join(self.output_file_dir, splitext_output[0])
