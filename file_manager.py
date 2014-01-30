@@ -12,13 +12,16 @@ MIME_TO_EXTENSION = {'text/html': 'html',
                      }
 
 class FileManager:
-    def __init__(self, input_file_path, output_file_path = '', converted = False):
+    def __init__(self, input_file_path, output_file_dir = '', converted = False, output_file_path = None):
         self.input_file_path = input_file_path
-        if not output_file_path:
-            self.output_file_path = os.path.dirname(
+        if not output_file_dir:
+            self.output_file_dir = os.path.dirname(
                 os.path.realpath(input_file_path))
+        elif output_file_dir == '.':
+            self.output_file_dir = ''
         else:
-            self.output_file_path = output_file_path
+            self.output_file_dir = output_file_dir
+        self.output_file_path = output_file_path
         self.converted = converted
 
     def is_converted(self):
@@ -45,7 +48,7 @@ class FileManager:
     def get_output_file_path(self, output_extension):
         file_name = os.path.basename(self.input_file_path)
         splitext_output = os.path.splitext(file_name)
-        output_file_name = os.path.join(self.output_file_path, splitext_output[0])
+        output_file_name = os.path.join(self.output_file_dir, splitext_output[0])
         return '.'.join([output_file_name, output_extension])
 
     def get_extension(self):

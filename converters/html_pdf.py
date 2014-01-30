@@ -28,4 +28,5 @@ class HtmlPdf(GeneralConverter):
             pisa.CreatePDF(bytestream, dest=output_file)
             if output_file_name:
                 input_file_object.converted = True
-                return (input_file_object, input_file_object.get_output_file_path('pdf'))
+                input_file_object.output_file_path = input_file_object.get_output_file_path('pdf')
+                return input_file_object
