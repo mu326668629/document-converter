@@ -7,6 +7,7 @@ from file_manager import FileManager
 from subprocess import call
 import urlparse
 import os
+import shutil
 
 class PdfHtml(GeneralConverter):
     """
@@ -19,14 +20,12 @@ class PdfHtml(GeneralConverter):
 
     def _single_convert(self, input_file_object):
         input_file = input_file_object.input_file_path
-        if input_file:
-            output_file_name = input_file_object.set_output_file_path(self.final_format)
-            output_file_dir = os.path.basename(os.path.dirname(output_file_name))
-            temp_output_file = os.path.join(output_file_dir, output_file_name)
-            output_file = os.path.join(os.path.basename(os.path.dirname(temp_output_file)), os.path.basename(temp_output_file))
-            os.system('pdf2htmlEX %s %s'%(input_file, output_file))
-            if output_file_name:
-                input_file_object.converted = True
-                input_file_object.output_file_path = input_file_object.set_output_file_path('html')
-                return input_file_object
-
+        target_output_file = input_file_object.set_output_file_path('html')
+        target_output_dir = os.path.dirname(target_output_file)
+        output_file_name = os.path.basename(target_output_file)
+        input_file_dir = os.path.dirname(input_file)
+        os.system('pdf2htmlEX %s'%input_file)
+        shutil.move(output_file_name, target_output_dir)
+        input_file_object.converted = True
+        return input_file_object
+        
