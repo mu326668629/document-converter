@@ -9,4 +9,4 @@ Flask-SQLAlchemy
 semisync
 Celery
 boto
-opsycopg2
+psycopg2
