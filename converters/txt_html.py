@@ -20,6 +20,5 @@ class TxtHtml(GeneralConverter):
         output_stream = markdown2.markdown(input_stream)
         output_file = input_file_object.write(self.final_format, output_stream)
         if output_file:
-            input_file_object.converted = True
             input_file_object.output_file_path = input_file_object.set_output_file_path('html')
             return input_file_object

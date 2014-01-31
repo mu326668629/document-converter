@@ -34,3 +34,11 @@ def class_selector(input_format, output_format):
             else:
                 result.append(class_selector(input_format_c, output_format)[0])
     return result
+
+def remove_duplicates(converters_list):
+    product = []
+    for converter_list in converters_list:
+        for converter in converter_list:
+            if converter not in product:
+                product.append(converter)    
+    return product
