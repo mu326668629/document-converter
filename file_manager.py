@@ -3,9 +3,18 @@ import mimetypes
 import magic
 import re
 import io
+from config import app
+from boto.s3.connection import S3Connection
+from boto.s3.key import Key
+
+AWS_S3_CONNECTION = S3Connection()
+
+bucket = AWS_S3_CONNECTION.get_bucket(app.config['S3_BUCKET'])
+bucket_key = Key(bucket)
 
 class FileManager:
-    def __init__(self, input_file_path, output_file_dir = '', converted = False, output_file_path = None):
+    def __init__(self, input_file_path, output_file_dir = '', converted = False,
+                output_file_path = None, remote_destination = None):
         self.input_file_path = input_file_path
         if not output_file_dir:
             self.output_file_dir = os.path.dirname(
@@ -16,6 +25,7 @@ class FileManager:
             self.output_file_dir = output_file_dir
         self.output_file_path = output_file_path
         self.converted = converted
+        self.remote_destination = remote_destination
 
     def is_converted(self):
         return self.converted == True
@@ -46,3 +56,15 @@ class FileManager:
         splitext_output = os.path.splitext(file_name)
         output_file_name = os.path.join(self.output_file_dir, splitext_output[0])
         return '.'.join([output_file_name, output_extension])
+
+    def set_remote_destination(self, remote_destination):
+        self.remote_destination = remote_destination
+
+    def upload_output_file(self):
+        if self.remote_destination:
+            bucket_key.key = self.remote_destination
+            bucket_key.set_contents_from_filename(self.output_file_path)
+            output_file_signed_url = bucket_key.generate_url(3600, query_auth=True, force_http=True)
+            return output_file_signed_url
+        else:
+            raise Exception("REMOTE DESTINATION not provided")
