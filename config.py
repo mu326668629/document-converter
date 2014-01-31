@@ -13,10 +13,7 @@ UPLOAD_FOLDER = 'tmp'
 OUTPUT_FOLDER = 'output/'
 
 S3_BUCKET = 'document_converter'
-S3_DUMP_FOLDER = 'test-output'
-
-if ENV == ENVIRONMENT.production:
-    S3_DUMP_FOLDER = 'output'
+S3_DUMP_FOLDER = 'output'
 
 POSTGRES_DB_URI = 'postgresql://rbox:rbox@localhost:5432/document_converter'
 SECRET_KEY = '5ryNFKc13vaz8ABzMujbxFqvTerIqwNXrunGF14P'

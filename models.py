@@ -27,7 +27,7 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, BadSigna
 class Account(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(32), index = True, unique = True)
-    password_hash = db.Column(db.Text)
+    password_hash = db.Column(db.String(256))
     callback = db.Column(db.Text)
 
     def hash_password(self, password):
@@ -81,7 +81,6 @@ class Conversion(db.Model):
     output_format = db.Column(db.String(10))
     status = db.Column(db.Integer, index = True)
     doc_id = db.Column(db.String(40), index = True)
-    signed_url = db.Column(db.Text)
 
     file_ref = db.Column(db.Integer, db.ForeignKey('file.id'))
     file_instance = db.relationship('File',
@@ -95,6 +94,13 @@ class Conversion(db.Model):
 
     def __repr__(self):
         return '<Conversion %r - %r>' % (self.file_instance, self.output_format)
+
+    @classmethod
+    def get_by_doc_id(cls, docId, userId):
+        conversion = cls.query.filter_by(doc_id = docId).first()
+        if conversion.file_instance.account_instance.id == userId:
+            return conversion
+
 
     @classmethod
     def register_file(cls, filename, location, account_instance, output_formats, priority):

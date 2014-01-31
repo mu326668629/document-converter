@@ -235,8 +235,8 @@ def test():
     time.sleep(7)
     print "Test started..."
     dr = DummyRequests(BASE_URL, DUMMY_REQUESTS)
-
     dr.execute_all()
+
     return (True, )
 
 @semisync(callback = output, dependencies = [construct_boiler_db, ])
