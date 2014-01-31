@@ -12,6 +12,10 @@ AWS_S3_CONNECTION = S3Connection()
 bucket = AWS_S3_CONNECTION.get_bucket(app.config['S3_BUCKET'])
 bucket_key = Key(bucket)
 
+def get_signed_url(destination):
+    bucket_key.key = destination
+    return bucket_key.generate_url(3600, query_auth=True, force_http=True)
+
 class FileManager:
     def __init__(self, input_file_path, output_file_dir = '', converted = False,
                 output_file_path = None, remote_destination = None):
@@ -64,7 +68,6 @@ class FileManager:
         if self.remote_destination:
             bucket_key.key = self.remote_destination
             bucket_key.set_contents_from_filename(self.output_file_path)
-            output_file_signed_url = bucket_key.generate_url(3600, query_auth=True, force_http=True)
-            return output_file_signed_url
+            return get_signed_url(self.remote_destination)
         else:
             raise Exception("REMOTE DESTINATION not provided")
