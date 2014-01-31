@@ -1,5 +1,6 @@
 import re
 import os
+import uuid
 import time
 import magic
 import mimetypes
@@ -14,10 +15,15 @@ MIME_TO_EXTENSION = {
     'application/msword': 'doc',
 }
 
+FILE_EXTENSIONS = ['pdf', 'txt', 'html', 'doc', 'docx', 'ppt', 'pptx', 'rtf', 'odt']
+
 def get_attrs(klass):
     return [k for k in klass.__dict__.keys()
         if not k.startswith('__')
         and not k.endswith('__')]
+
+def get_uuid():
+    return uuid.uuid4().hex
 
 def timestamp_filename(filename):
     return str(int(time.time()*1000)) + '_' + filename
@@ -25,6 +31,10 @@ def timestamp_filename(filename):
 def allowed_filename(filename, possible_extensions):
     extensionRegExp = '|'.join(possible_extensions)
     return bool(re.match(r'.*\.(' + extensionRegExp + ')$', filename))
+
+def rename_filename_with_extension(filename, extension):
+    extension = extension if extension.startswith('.') else '.' + extension
+    return re.sub(r'(\.(' + '|'.join(FILE_EXTENSIONS) + '))?$', extension, filename)
 
 def get_filename_from_url(url):
     return url.split('/')[-1]
@@ -45,14 +55,16 @@ def download_url(url, destination_dir, timestamp = True):
                 
     return local_filename
 
+def get_extension_from_filename(filename):
+    extensions = re.findall('\.\w+$', filename)
+    if extensions:
+        return extensions[0][1:]
+
 def get_file_extension(file_path):
     mime_type = get_mime_type(file_path)
     extension = MIME_TO_EXTENSION.get(mime_type)
     if not extension:
-        expression = re.compile('\.\w+$')
-        extensions = expression.findall(file_path)
-        if extensions:
-            extension = extensions[0][1:]
+        extension = get_extension_from_filename(file_path)
     return extension
 
 def get_mime_type(file_path):
