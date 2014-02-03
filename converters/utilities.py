@@ -33,7 +33,7 @@ def class_selector(input_format, output_format):
                 result = result[:-1]
             else:
                 result.append(class_selector(input_format_c, output_format)[0])
-    return result
+    return remove_duplicates(result)
 
 def remove_duplicates(converters_list):
     product = []
