@@ -18,7 +18,6 @@ class HtmlTxt(GeneralConverter):
 
     def _single_convert(self, input_file_object):
         final_format = self.final_format
-        print input_file_object.input_file_path
         if input_file_object.get_input_file_object():
             h = html2text.HTML2Text()
             h.ignore_links = True
@@ -32,8 +31,4 @@ class HtmlTxt(GeneralConverter):
             output_file = input_file_object.write(output_extension, outputstream)
             if output_file:
                 input_file_object.output_file_path = input_file_object.set_output_file_path('txt')
-                print "RED"
-                print input_file_object.output_file_path
-                print input_file_object.get_output_file_path()
-                print "BLUE"
                 return input_file_object
