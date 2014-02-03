@@ -52,6 +52,9 @@ class FileManager:
             f.write(stream)
             return output_file_name
 
+    def get_input_file_path(self):
+        return self.input_file_path
+
     def get_output_file_path(self):
         return self.output_file_path
 
