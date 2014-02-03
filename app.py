@@ -76,10 +76,13 @@ def upload():
     file = request.files.get('file')
     allowed_extensions = app.config['ALLOWED_EXTENSIONS']
 
-    if file and allowed_filename(file.filename, allowed_extensions):
-        filename = secure_filename(file.filename)
-        location = timestamp_filename(filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], location))
+    if file:
+        if allowed_filename(file.filename, allowed_extensions):
+            filename = secure_filename(file.filename)
+            location = timestamp_filename(filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], location))
+        else:
+            return jsonify({'Error': 'File format not allowed'}), 400
     else:
         fileURL = request.form.get('fileURL')
         if fileURL:
@@ -96,14 +99,13 @@ def upload():
 def download():
     docId = request.json.get('docId')
     conversion = Conversion.get_by_doc_id(docId, g.user.id)
-    if conversion.status == STATUS.completed:
+    if conversion and conversion.status == STATUS.completed:
         filename = rename_filename_with_extension(conversion.file_instance.filename,
             conversion.output_format)
-        if conversion:
-            remote_location = os.path.join(app.config['S3_DUMP_FOLDER'], conversion.doc_id, 
-                filename)
+        remote_location = os.path.join(app.config['S3_DUMP_FOLDER'], conversion.doc_id, 
+            filename)
     
-            return jsonify({'Signed URL': get_signed_url(remote_location), 'docId': docId}), 200
+        return jsonify({'Signed URL': get_signed_url(remote_location), 'docId': docId}), 200
     return jsonify({'Error': 'Failed to get conversion'}), 404
 
 @app.route('/dummy_callback', methods = ['POST'])
