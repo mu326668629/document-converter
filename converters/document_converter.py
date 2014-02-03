@@ -1,11 +1,9 @@
 import sys
 sys.path.append('converters/')
 
-from general import GeneralConverter
 from utilities import class_selector
 from utilities import FileManager
 from utils import get_file_extension
-from sets import Set
 
 def convert(input_files_objects, output_formats):
     sample_input_file = input_files_objects[0].input_file_path
