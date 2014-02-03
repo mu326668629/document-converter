@@ -5,7 +5,6 @@ from html_pdf import HtmlPdf
 from html_txt import HtmlTxt
 from pdf_html import PdfHtml
 from txt_html import TxtHtml
-from file_manager import FileManager
 import re
 
 
