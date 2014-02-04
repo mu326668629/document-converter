@@ -2,10 +2,7 @@ import sys
 sys.path.append('..')
 CONVERTER_LOCATION = '/Applications/LibreOffice.app/Contents/MacOS/soffice --headless --convert-to html'
 from general import GeneralConverter
-from html2text import html2text
 from file_manager import FileManager
-from bs4 import BeautifulSoup
-import re
 
 class DocHtml(GeneralConverter):
     """

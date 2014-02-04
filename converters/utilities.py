@@ -11,7 +11,8 @@ import re
 
 AVAILABLE_FORMATS = ['pdf', 'html', 'txt', 'doc']
 
-AVAILABLE_CONVERTERS = [(HtmlPdf, 'htmlpdf'), (HtmlTxt, 'htmltxt'), (PdfHtml, 'pdfhtml'), (TxtHtml, 'txthtml'), [DocHtml, 'dochtml']]
+AVAILABLE_CONVERTERS = [(HtmlPdf, 'htmlpdf'), (HtmlTxt, 'htmltxt'), (PdfHtml, 'pdfhtml'),
+                        (TxtHtml, 'txthtml'), (DocHtml, 'dochtml')]
 
 FORMAT_RE = [re.compile('.*%s'%fmt) for fmt in AVAILABLE_FORMATS]
 
