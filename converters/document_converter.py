@@ -20,8 +20,6 @@ def convert(input_files_objects, output_formats):
         output_files_objects = [FileManager(interim_file_object.get_output_file_path())
                                for interim_file_object in interim_files_objects]
         interim_files_objects = output_files_objects
-    print input_files_objects
-    print interim_files_objects
     for input_file_object, interim_file_object in zip(input_files_objects, interim_files_objects):
         input_file_object.converted = True
         input_file_object.output_file_path = interim_file_object.get_input_file_path()
