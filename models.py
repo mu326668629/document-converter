@@ -58,8 +58,8 @@ class Account(db.Model):
 
 class File(db.Model):
     id = db.Column(db.Integer, primary_key = True)
-    filename = db.Column(db.Text)
-    location = db.Column(db.Text)
+    filename = db.Column(db.String(80))
+    location = db.Column(db.String(80), index = True)
     priority = db.Column(db.Integer, index = True)
     timestamp = db.Column(db.DateTime)
     account_ref = db.Column(db.Integer, db.ForeignKey('account.id'))
@@ -100,7 +100,6 @@ class Conversion(db.Model):
         conversion = cls.query.filter_by(doc_id = docId).first()
         if conversion.file_instance.account_instance.id == userId:
             return conversion
-
 
     @classmethod
     def register_file(cls, filename, location, account_instance, output_formats, priority):
