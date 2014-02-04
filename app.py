@@ -154,7 +154,7 @@ def disk_cleaner(pm = PidManager('proc/dc.pid')):
                 epoch = extract_epoch_from_filename(f)
                 if not epoch: continue
 
-                if is_older_than_n_seconds(epoch, 240):
+                if is_older_than_n_seconds(epoch, 300):
                     os.remove(os.path.join(app.config['OUTPUT_FOLDER'], f))
                 else:
                     conversion = Conversion.query\
@@ -171,7 +171,7 @@ def disk_cleaner(pm = PidManager('proc/dc.pid')):
                 epoch = extract_epoch_from_filename(f)
                 if not epoch: continue
 
-                if is_older_than_n_seconds(epoch, 240):
+                if is_older_than_n_seconds(epoch, 300):
                     os.remove(os.path.join(app.config['UPLOAD_FOLDER'], f))
 
         # Iter after 10 seconds
