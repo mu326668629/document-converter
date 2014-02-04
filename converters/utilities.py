@@ -5,12 +5,13 @@ from html_pdf import HtmlPdf
 from html_txt import HtmlTxt
 from pdf_html import PdfHtml
 from txt_html import TxtHtml
+from doc_html import DocHtml
 import re
 
 
-AVAILABLE_FORMATS = ['pdf', 'html', 'txt']
+AVAILABLE_FORMATS = ['pdf', 'html', 'txt', 'doc']
 
-AVAILABLE_CONVERTERS = [(HtmlPdf, 'htmlpdf'), (HtmlTxt, 'htmltxt'), (PdfHtml, 'pdfhtml'), (TxtHtml, 'txthtml')]
+AVAILABLE_CONVERTERS = [(HtmlPdf, 'htmlpdf'), (HtmlTxt, 'htmltxt'), (PdfHtml, 'pdfhtml'), (TxtHtml, 'txthtml'), [DocHtml, 'dochtml']]
 
 FORMAT_RE = [re.compile('.*%s'%fmt) for fmt in AVAILABLE_FORMATS]
 
