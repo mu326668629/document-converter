@@ -1,9 +1,10 @@
 import os
+import re
 from utils import *
 from config import app, db
 from models import File, Conversion, Account, STATUS, PRIORITY
 from semisync import semisync
-from time import sleep
+from time import sleep, time
 from tasks import document_converter
 from file_manager import get_signed_url
 
@@ -121,7 +122,7 @@ def request_fetcher(pm = PidManager('proc/rf.pid')):
     pm.register()
     while True:
         # Get conversions by priority
-        conversions = Conversion.get_requests_by_priority(limit = 3)
+        conversions = Conversion.get_requests_by_priority(limit = 1)
 
         # Forward request ids to document converter
         conversion_ids = map(lambda conversion: conversion.id, conversions)
@@ -133,19 +134,62 @@ def request_fetcher(pm = PidManager('proc/rf.pid')):
             db.session.commit()
 
         # Iter after sleep
-        sleep(0.5)
+        sleep(0.2)
+
+@semisync(callback = output)
+def disk_cleaner(pm = PidManager('proc/dc.pid')):
+    pm.register()
+
+    def extract_epoch_from_filename(filename):
+        if re.match('^\d+_', filename):
+            return int(filename.split('_')[0])
+
+    def is_older_than_n_seconds(epoch, n):
+        return int(time() * 1000) - n * 1000 > epoch
+
+    while True:
+        # Iter output folder
+        for root, _, files in os.walk(app.config['OUTPUT_FOLDER']):
+            for f in files:
+                epoch = extract_epoch_from_filename(f)
+                if not epoch: continue
+
+                if is_older_than_n_seconds(epoch, 240):
+                    os.remove(os.path.join(app.config['OUTPUT_FOLDER'], f))
+                else:
+                    conversion = Conversion.query\
+                        .join(File)\
+                        .filter(File.location.startswith(str(epoch)),
+                            Conversion.output_format == get_extension_from_filename(f))\
+                        .first()
+                    if conversion.status in (STATUS.completed, STATUS.failed):
+                        os.remove(os.path.join(app.config['OUTPUT_FOLDER'], f))
+
+        # Iter upload foler
+        for root, _, files in os.walk(app.config['UPLOAD_FOLDER']):
+            for f in files:
+                epoch = extract_epoch_from_filename(f)
+                if not epoch: continue
+
+                if is_older_than_n_seconds(epoch, 240):
+                    os.remove(os.path.join(app.config['UPLOAD_FOLDER'], f))
+
+        # Iter after 10 seconds
+        sleep(10)
 
 @semisync(callback = output)
 def app_server():
     app.run()
 
 if __name__ == '__main__':
-    pm = PidManager('proc/rf.pid')
-    if not pm.is_running():
-        print "Request fetcher not running..."
-        request_fetcher(pm)
-    else:
-        print "Request fetcher running, no need to fork..."
+    rf = PidManager('proc/rf.pid')
+    dc = PidManager('proc/dc.pid')
+
+    if not rf.is_running():
+        request_fetcher(rf)
+
+    if not dc.is_running():
+        disk_cleaner(dc)
 
     app_server()
     semisync.begin()
