@@ -93,4 +93,4 @@ def remote_upload_handler(file_manager_obj, conversion_id):
         'Signed URL': conversion.signed_url,
         'docId': conversion.doc_id
         }
-    )
+    )   
