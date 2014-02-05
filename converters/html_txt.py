@@ -30,8 +30,10 @@ class HtmlTxt(GeneralConverter):
                 [s.extract() for s in soup(attr)]
             bytestream = unicode(soup)
             try:
+                print "BLUE"
                 outputstream = h.handle(bytestream)
             except:
+                print "RED"
                 return None
             output_file = input_file_object.write(output_extension, outputstream)
             if output_file:

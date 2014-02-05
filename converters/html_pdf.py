@@ -26,8 +26,10 @@ class HtmlPdf(GeneralConverter):
             output_file_name = input_file_object.set_output_file_path(final_format)
             output_file = io.open(output_file_name, 'w+b')
             try:
+                print "BLUE"
                 pisa.CreatePDF(bytestream, dest=output_file)
             except:
+                print "RED"
                 return None
             if output_file_name:
                 input_file_object.output_file_path = input_file_object.set_output_file_path('pdf')

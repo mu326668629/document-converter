@@ -18,8 +18,10 @@ class TxtHtml(GeneralConverter):
     def _single_convert(self, input_file_object):
         input_stream = input_file_object.get_stream()
         try:
+            print "Blue"
             output_stream = markdown2.markdown(input_stream)
         except:
+            print "RED"
             return None
         output_file = input_file_object.write(self.final_format, output_stream)
         if output_file:
