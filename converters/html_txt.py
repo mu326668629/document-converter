@@ -29,7 +29,10 @@ class HtmlTxt(GeneralConverter):
             for attr in invalidAttrs:
                 [s.extract() for s in soup(attr)]
             bytestream = unicode(soup)
-            outputstream = h.handle(bytestream)
+            try:
+                outputstream = h.handle(bytestream)
+            except:
+                return None
             output_file = input_file_object.write(output_extension, outputstream)
             if output_file:
                 input_file_object.output_file_path = input_file_object.set_output_file_path('txt')
