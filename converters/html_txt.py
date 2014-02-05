@@ -19,13 +19,18 @@ class HtmlTxt(GeneralConverter):
     def _single_convert(self, input_file_object):
         final_format = self.final_format
         if input_file_object.get_input_file_object():
-            h = html2text.HTML2Text()
+            try:
+                h = html2text.HTML2Text()
+            except:
+                return None
             h.ignore_links = True
             h.ignore_images = True
             output_extension = final_format
             bytestream = input_file_object.get_stream()
             soup = BeautifulSoup(bytestream)
-            [s.extract() for s in soup('script')]
+            invalidAttrs = 'href src width height target style color face size script'.split()
+            for attr in invalidAttrs:
+                [s.extract() for s in soup(attr)]
             bytestream = unicode(soup)
             outputstream = h.handle(bytestream)
             output_file = input_file_object.write(output_extension, outputstream)
