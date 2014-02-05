@@ -19,10 +19,7 @@ class HtmlTxt(GeneralConverter):
     def _single_convert(self, input_file_object):
         final_format = self.final_format
         if input_file_object.get_input_file_object():
-            try:
-                h = html2text.HTML2Text()
-            except:
-                return None
+            h = html2text.HTML2Text()
             h.ignore_links = True
             h.ignore_images = True
             output_extension = final_format
