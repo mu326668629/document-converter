@@ -28,6 +28,7 @@ class HtmlPdf(GeneralConverter):
             try:
                 print "BLUE"
                 pisa.CreatePDF(bytestream, dest=output_file)
+                print "ORANGE"
             except:
                 print "RED"
                 return None
