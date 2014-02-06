@@ -156,14 +156,6 @@ def disk_cleaner(pm = PidManager('proc/dc.pid')):
 
                 if is_older_than_n_seconds(epoch, 300):
                     os.remove(os.path.join(app.config['OUTPUT_FOLDER'], f))
-                else:
-                    conversion = Conversion.query\
-                        .join(File)\
-                        .filter(File.location.startswith(str(epoch)),
-                            Conversion.output_format == get_extension_from_filename(f))\
-                        .first()
-                    if conversion.status in (STATUS.completed, STATUS.failed):
-                        os.remove(os.path.join(app.config['OUTPUT_FOLDER'], f))
 
         # Iter upload foler
         for root, _, files in os.walk(app.config['UPLOAD_FOLDER']):
@@ -174,8 +166,8 @@ def disk_cleaner(pm = PidManager('proc/dc.pid')):
                 if is_older_than_n_seconds(epoch, 300):
                     os.remove(os.path.join(app.config['UPLOAD_FOLDER'], f))
 
-        # Iter after 10 seconds
-        sleep(10)
+        # Iter after 20 seconds
+        sleep(20)
 
 @semisync(callback = output)
 def app_server():
