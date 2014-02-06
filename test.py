@@ -104,17 +104,17 @@ class DummyRequests(object):
                     has_valid_auth_token = False
 
 DUMMY_REQUESTS = [
-    # {
-    #   'method': 'POST',
-    #   'type': 'files',
-    #   'url': BASE_URL + '/upload',
-    #   'files': {'file': open('testdata/1.pdf', 'rb')},
-    #   'data': {
-    #       'priority': '0',
-    #       'output-formats': 'txt;pdf'
-    #   },
-    #   'headers': {'Accept': "application/json"}
-    # },
+    {
+      'method': 'POST',
+      'type': 'files',
+      'url': BASE_URL + '/upload',
+      'files': {'file': open('testdata/1.pdf', 'rb')},
+      'data': {
+          'priority': '0',
+          'output-formats': 'txt;html'
+      },
+      'headers': {'Accept': "application/json"}
+    },
     {
         'method': 'POST',
         'type': 'files',
@@ -137,83 +137,72 @@ DUMMY_REQUESTS = [
         },
         'headers': {'Accept': "application/json"}
     },
-    # {
-    #   'method': 'POST',
-    #   'type': 'data',
-    #   'url': BASE_URL + '/upload',
-    #   'data': {
-    #       'fileURL': 'http://www.uwgb.edu/nursing/files/docs/Sample-APA-template.doc',
-    #       'priority': '2',
-    #       'output-formats': 'doc;txt;html'
-    #   },
-    #   'headers': {'Accept': "application/json"}
-    # },
-    # {
-    #   'method': 'POST',
-    #   'type': 'files',
-    #   'url': BASE_URL + '/upload',
-    #   'files': {'file': open('testdata/2.pdf', 'rb')},
-    #   'data': {
-    #       'priority': '0',
-    #       'output-formats': 'txt;pdf'
-    #   },
-    #   'headers': {'Accept': "application/json"}
-    # },
-    # {
-    #   'method': 'POST',
-    #   'type': 'data',
-    #   'url': BASE_URL + '/upload',
-    #   'data': {
-    #       'fileURL': 'http://www.snee.com/xml/xslt/sample.doc',
-    #       'priority': '2',
-    #       'output-formats': 'doc;txt;html'
-    #   },
-    #   'headers': {'Accept': "application/json"}
-    # },
-    # {
-    #   'method': 'POST',
-    #   'type': 'files',
-    #   'url': BASE_URL + '/upload',
-    #   'files': {'file': open('testdata/3.pdf', 'rb')},
-    #   'data': {
-    #       'priority': '0',
-    #       'output-formats': 'txt;pdf'
-    #   },
-    #   'headers': {'Accept': "application/json"}
-    # },
-    # {
-    #   'method': 'POST',
-    #   'type': 'data',
-    #   'url': BASE_URL + '/upload',
-    #   'data': {
-    #       'fileURL': 'http://www.ancestralauthor.com/download/sample.pdf',
-    #       'priority': '2',
-    #       'output-formats': 'doc;txt;html'
-    #   },
-    #   'headers': {'Accept': "application/json"}
-    # },
-    # {
-    #   'method': 'POST',
-    #   'type': 'files',
-    #   'url': BASE_URL + '/upload',
-    #   'files': {'file': open('testdata/4.pdf', 'rb')},
-    #   'data': {
-    #       'priority': '0',
-    #       'output-formats': 'txt;pdf'
-    #   },
-    #   'headers': {'Accept': "application/json"}
-    # },
-    # {
-    #   'method': 'POST',
-    #   'type': 'data',
-    #   'url': BASE_URL + '/upload',
-    #   'data': {
-    #       'fileURL': 'http://www.manning.com/lowagie/sample-ch03_Lowagie.pdf',
-    #       'priority': '2',
-    #       'output-formats': 'doc;txt;html'
-    #   },
-    #   'headers': {'Accept': "application/json"}
-    # }
+    {
+        'method': 'POST',
+        'type': 'data',
+        'url': BASE_URL + '/upload',
+        'data': {
+            'fileURL': 'http://www.uwgb.edu/nursing/files/docs/Sample-APA-template.doc',
+            'priority': '2',
+            'output-formats': 'pdf;txt;html'
+        },
+        'headers': {'Accept': "application/json"}
+    },
+    {
+        'method': 'POST',
+        'type': 'files',
+        'url': BASE_URL + '/upload',
+        'files': {'file': open('testdata/6.pdf', 'rb')},
+        'data': {
+            'priority': '0',
+            'output-formats': 'txt;html'
+        },
+        'headers': {'Accept': "application/json"}
+    },
+    {
+      'method': 'POST',
+      'type': 'data',
+      'url': BASE_URL + '/upload',
+      'data': {
+          'fileURL': 'http://www.snee.com/xml/xslt/sample.doc',
+          'priority': '2',
+          'output-formats': 'pdf;txt;html'
+      },
+      'headers': {'Accept': "application/json"}
+    },
+    {
+      'method': 'POST',
+      'type': 'files',
+      'url': BASE_URL + '/upload',
+      'files': {'file': open('testdata/3.pdf', 'rb')},
+      'data': {
+          'priority': '0',
+          'output-formats': 'html;'
+      },
+      'headers': {'Accept': "application/json"}
+    },
+    {
+      'method': 'POST',
+      'type': 'data',
+      'url': BASE_URL + '/upload',
+      'data': {
+          'fileURL': 'http://www.ancestralauthor.com/download/sample.pdf',
+          'priority': '2',
+          'output-formats': 'html;txt;'
+      },
+      'headers': {'Accept': "application/json"}
+    },
+    {
+      'method': 'POST',
+      'type': 'data',
+      'url': BASE_URL + '/upload',
+      'data': {
+          'fileURL': 'http://www.manning.com/lowagie/sample-ch03_Lowagie.pdf',
+          'priority': '2',
+          'output-formats': 'txt;html'
+      },
+      'headers': {'Accept': "application/json"}
+    },
 ]
 
 def dummy_requests_callback():
@@ -231,8 +220,8 @@ def construct_boiler_db():
 
 @semisync(callback = output, dependencies = [construct_boiler_db, ])
 def test():
-    print "Beginning test in 7 seconds"
-    time.sleep(7)
+    print "Beginning test in 8 seconds"
+    time.sleep(8)
     print "Test started..."
     dr = DummyRequests(BASE_URL, DUMMY_REQUESTS)
     dr.execute_all()
