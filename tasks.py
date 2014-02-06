@@ -37,12 +37,12 @@ def document_converter(request_ids):
         # Convert document.
         inputFilePath = os.path.join(flask_app.config['UPLOAD_FOLDER'],
                                 conversion.file_instance.location)
-
+        
         fm = FileManager(inputFilePath, flask_app.config['OUTPUT_FOLDER'])
         convert([fm], [conversion.output_format])
 
         if fm.is_converted():
-            print conversion.file_instance, "The file was converted successfully"
+            #print conversion, "The file was converted successfully"
             
             conversion.status = STATUS.converted
             db.session.commit()
@@ -63,7 +63,7 @@ def document_converter(request_ids):
             fm.set_remote_destination(destination)
             remote_upload_handler.delay(fm, conversion.id)
         else:
-            print "Unable to convert file"
+            #print "Unable to convert file"
             
             conversion.status = STATUS.failed
             db.session.commit()
@@ -81,6 +81,7 @@ def post_handler(url, data):
 @app.task
 def remote_upload_handler(file_manager_obj, conversion_id):
     conversion = Conversion.query.get(conversion_id)
+    #print conversion
     callback = conversion.file_instance.account_instance.callback
     output_file_signed_url = file_manager_obj.upload_output_file()
     conversion.signed_url = output_file_signed_url
