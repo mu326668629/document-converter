@@ -126,12 +126,13 @@ def request_fetcher(pm = PidManager('proc/rf.pid')):
 
         # Forward request ids to document converter
         conversion_ids = map(lambda conversion: conversion.id, conversions)
-        document_converter.delay(conversion_ids)
+        if conversion_ids:
+            document_converter.delay(conversion_ids)
 
-        # Mark Queued
-        for conversion in conversions:
-            conversion.status = STATUS.queued
-            db.session.commit()
+            # Mark Queued
+            for conversion in conversions:
+                conversion.status = STATUS.queued
+                db.session.commit()
 
         # Iter after sleep
         sleep(0.2)
