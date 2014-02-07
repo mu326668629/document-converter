@@ -39,21 +39,23 @@ def rename_filename_with_extension(filename, extension):
 def get_filename_from_url(url):
     return url.split('/')[-1]
 
-def download_url(url, destination_dir, timestamp = True):
-    local_filename = get_filename_from_url(url)
+def download_url(url, destination_dir, target_filename = None, timestamp = True):
+    if not target_filename:
+        target_filename = get_filename_from_url(url)
+
     if timestamp:
-        local_filename = timestamp_filename(local_filename)
+        target_filename = timestamp_filename(target_filename)
 
     r = requests.get(url, stream=True)
-    local_filepath = os.path.join(destination_dir, local_filename)
+    target_filepath = os.path.join(destination_dir, target_filename)
 
-    with open(local_filepath, 'wb') as f:
+    with open(target_filepath, 'wb') as f:
         for chunk in r.iter_content(chunk_size=1024):
             if chunk:
                 f.write(chunk)
                 f.flush()
                 
-    return local_filepath
+    return target_filepath
 
 def get_extension_from_filename(filename):
     extensions = re.findall('\.\w+$', filename)
