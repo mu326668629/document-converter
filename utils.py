@@ -37,7 +37,7 @@ def rename_filename_with_extension(filename, extension):
     return re.sub(r'(\.(' + '|'.join(FILE_EXTENSIONS) + '))?$', extension, filename)
 
 def get_filename_from_url(url):
-    return url.split('/')[-1]
+    return url.split('?')[0].split('/')[-1]
 
 def download_url(url, destination_dir, target_filename = None, timestamp = True):
     if not target_filename:
