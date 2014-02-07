@@ -1,3 +1,6 @@
+OUTPUT_FOLDER = 'output/'
+TEMP_FOLDER = 'tmp/'
+
 class GeneralConverter(object):
 
     """
@@ -8,6 +11,8 @@ class GeneralConverter(object):
         The attributes get initlalized in subclasses.
         """
         self.initial_format = initial_format
+        self.output_folder = OUTPUT_FOLDER
+        self.tmp_folder = TEMP_FOLDER
         self.final_format = final_format
         self.file_batch = input_file_objects
   
