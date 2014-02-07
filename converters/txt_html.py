@@ -3,6 +3,7 @@ sys.path.insert(0, '..')
 
 from general import GeneralConverter
 from file_manager import FileManager
+from file_manager import write_stream
 import markdown2
 import io
 
@@ -16,12 +17,14 @@ class TxtHtml(GeneralConverter):
         self.file_batch = input_file_paths
 
     def _single_convert(self, input_file_object):
-        input_stream = input_file_object.get_stream()
+        input_stream = input_file_object.get_input_stream()
         try:
             output_stream = markdown2.markdown(input_stream)
         except:
             return None
-        output_file = input_file_object.write(self.final_format, output_stream)
+        output_file_name = rename_filename_with_extension(
+            os.path.basename(input_file_object.get_input_file_path()),
+            final_format)
+        output_file = write_stream(output_file_name, output_stream)
         if output_file:
-            input_file_object.output_file_path = input_file_object.set_output_file_path('html')
             return input_file_object

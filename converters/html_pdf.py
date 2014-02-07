@@ -18,17 +18,19 @@ class HtmlPdf(GeneralConverter):
         
     def _single_convert(self, input_file_object):
         final_format = self.final_format
-        if input_file_object.get_input_file_object():
-            bytestream = input_file_object.get_stream()
-            soup = BeautifulSoup(bytestream)
-            [s.extract() for s in soup('script')]
-            bytestream = unicode(soup)
-            output_file_name = input_file_object.set_output_file_path(final_format)
-            output_file = io.open(output_file_name, 'w+b')
-            try:
-                pisa.CreatePDF(bytestream, dest=output_file)
-            except:
-                return None
-            if output_file_name:
-                input_file_object.output_file_path = input_file_object.set_output_file_path('pdf')
-                return input_file_object
+        bytestream = input_file_object.get_input_stream()
+        soup = BeautifulSoup(bytestream)
+        invalidAttrs = 'href src width height target style color face size script'.split()
+        for attr in invalidAttrs:
+            [s.extract() for s in soup(attr)]
+        bytestream = unicode(soup)
+        output_file_name = rename_filename_with_extension(
+            os.path.basename(input_file_object.get_input_file_path()),
+            final_format)
+        output_file = io.open(output_file_name, 'w+b')
+        try:
+            pisa.CreatePDF(bytestream, dest=output_file)
+        except:
+            return None
+        if output_file_name:
+            return input_file_object
