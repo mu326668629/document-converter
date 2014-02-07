@@ -39,19 +39,15 @@ class FileManager(object):
     def is_converted(self):
         return self.converted == True
     
-    def get_input_file(self):
-        remote_path = get_signed_url(self.resource_path, self.bucket)
-        self.input_file_path = download_url(remote_path,
-            app.config['UPLOAD_FOLDER'])
+    def get_input_file_path(self):
+        if not self.input_file_path:
+            remote_path = get_signed_url(self.resource_path, self.bucket)
+            self.input_file_path = download_url(remote_path,
+                app.config['UPLOAD_FOLDER'])
         return self.input_file_path
 
     def get_input_stream(self):
-        if not self.input_file_path:
-            self.input_file_path = self.get_input_file()
-        return io.open(self.input_file_path).read()
-
-    def get_input_file_path(self):
-        return self.input_file_path
+        return io.open(self.get_input_file_path()).read()
 
     def remove_input_file(self):
         os.remove(self.input_file_path)
