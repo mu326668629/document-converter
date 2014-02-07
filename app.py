@@ -1,6 +1,7 @@
 import os
 import re
-from utils import *
+from utils import (get_uuid, timestamp_filename, allowed_filename,
+    get_filename_from_url, download_url, PidManager)
 from config import app, db
 from models import File, Conversion, Account, STATUS, PRIORITY
 from semisync import semisync
@@ -90,7 +91,8 @@ def upload():
         fileURL = request.form.get('fileURL')
         if fileURL:
             filename = get_filename_from_url(fileURL)
-            local_path = download_url(fileURL, app.config['UPLOAD_FOLDER'], timestamp = True)
+            local_path = download_url(fileURL,
+                app.config['UPLOAD_FOLDER'], timestamp = True)
         else:
             return jsonify({'Error': 'File seems screwed'}), 400
     
@@ -101,7 +103,8 @@ def upload():
     os.remove(local_path)
 
     # Register the file for conversions and return docIds
-    docIds = Conversion.register_file(filename, remote_destination, g.user, output_formats, priority)
+    docIds = Conversion.register_file(filename, remote_destination,
+        g.user, output_formats, priority)
     return jsonify({'Status': STATUS.introduced, 'docIds': docIds})
 
 @app.route('/download', methods = ['POST'])
@@ -110,12 +113,11 @@ def download():
     docId = request.json.get('docId')
     conversion = Conversion.get_by_doc_id(docId, g.user.id)
     if conversion and conversion.status == STATUS.completed:
-        filename = rename_filename_with_extension(conversion.file_instance.filename,
-            conversion.output_format)
-        remote_location = os.path.join(app.config['REMOTE_DUMP_FOLDER'], conversion.doc_id, 
-            filename)
-    
-        return jsonify({'Signed URL': get_signed_url(remote_location), 'docId': docId}), 200
+        return jsonify({
+            'Signed URL': get_signed_url(conversion.get_remote_location()),
+            'docId': docId
+            }
+        ), 200
     return jsonify({'Error': 'Failed to get conversion'}), 404
 
 @app.route('/dummy_callback', methods = ['POST'])
