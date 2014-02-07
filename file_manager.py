@@ -56,24 +56,11 @@ class FileManager(object):
     def remove_input_file(self):
         os.remove(self.input_file_path)
 
-    def write_output_file(self, output_extension, stream):
-        if not self.output_file_path:
-            self.set_output_file_path(output_extension)
-
-        with io.open(self.output_file_path, 'w+') as f:
-            f.write(stream)
-            return self.output_file_path
-
     def get_output_file_path(self):
         return self.output_file_path
 
-    def set_output_file_path(self, output_extension):
-        filename = rename_filename_with_extension(
-            os.path.basename(self.input_file_path), output_extension)
-
-        self.output_file_path = os.path.join(
-            app.config['OUTPUT_FOLDER'], filename)
-
+    def set_output_file_path(self, filepath):
+        self.output_file_path = filepath
         return self.output_file_path
 
     def remove_output_file(self):
