@@ -6,7 +6,7 @@ import requests
 
 JSON_HEADERS = {'Content-type': 'application/json', 'Accept': 'application/json'}
 
-from config import db
+from models import db
 from config import app as flask_app
 from models import Account, File, Conversion, STATUS
 
@@ -35,10 +35,7 @@ def document_converter(request_ids):
         )
 
         # Convert document.
-        inputFilePath = os.path.join(flask_app.config['UPLOAD_FOLDER'],
-                                conversion.file_instance.location)
-        
-        fm = FileManager(inputFilePath, flask_app.config['OUTPUT_FOLDER'])
+        fm = FileManager(conversion.file_instance.location)
         convert([fm], [conversion.output_format])
 
         if fm.is_converted():
@@ -54,13 +51,7 @@ def document_converter(request_ids):
                 }
             )
             # Spawn off upload
-            extension = get_extension_from_filename(fm.get_output_file_path())
-            destination_filename = rename_filename_with_extension(
-                conversion.file_instance.filename, extension)
-
-            destination = os.path.join(flask_app.config['S3_DUMP_FOLDER'],
-                conversion.doc_id, destination_filename)
-            fm.set_remote_destination(destination)
+            fm.set_remote_destination(conversion.get_remote_location())
             remote_upload_handler.delay(fm, conversion.id)
         else:
             #print "Unable to convert file"
@@ -83,15 +74,14 @@ def remote_upload_handler(file_manager_obj, conversion_id):
     conversion = Conversion.query.get(conversion_id)
     #print conversion
     callback = conversion.file_instance.account_instance.callback
-    output_file_signed_url = file_manager_obj.upload_output_file()
-    conversion.signed_url = output_file_signed_url
+    output_file_url = file_manager_obj.upload_output_file()
     conversion.status = STATUS.completed
     db.session.commit()
 
     # POST signed URL with status and doc_id
     post_handler.delay(callback, {
         'Status': conversion.status,
-        'Signed URL': conversion.signed_url,
+        'Signed URL': output_file_url,
         'docId': conversion.doc_id
         }
-    )   
+    )

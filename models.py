@@ -1,6 +1,10 @@
+import os
 from datetime import datetime
-from utils import get_attrs, get_uuid
-from config import app, db
+from utils import get_attrs, get_uuid, rename_filename_with_extension
+from config import app
+
+from flask.ext.sqlalchemy import SQLAlchemy
+db = SQLAlchemy(app)
 
 class STATUS:
     introduced = 1
@@ -59,7 +63,7 @@ class Account(db.Model):
 class File(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     filename = db.Column(db.String(80))
-    location = db.Column(db.String(80), index = True)
+    location = db.Column(db.String(120))
     priority = db.Column(db.Integer, index = True)
     timestamp = db.Column(db.DateTime)
     account_ref = db.Column(db.Integer, db.ForeignKey('account.id'))
@@ -94,6 +98,11 @@ class Conversion(db.Model):
 
     def __repr__(self):
         return '<Conversion %r - %r>' % (self.file_instance, self.output_format)
+
+    def get_remote_location(self):
+        filename = rename_filename_with_extension(self.file_instance.filename,
+            self.output_format)
+        return os.path.join(app.config['REMOTE_DUMP_FOLDER'], self.doc_id, filename)
 
     @classmethod
     def get_by_doc_id(cls, docId, userId):

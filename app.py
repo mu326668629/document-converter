@@ -6,7 +6,7 @@ from models import File, Conversion, Account, STATUS, PRIORITY
 from semisync import semisync
 from time import sleep, time
 from tasks import document_converter
-from file_manager import get_signed_url
+from file_manager import get_signed_url, upload_to_remote
 
 from flask import abort, request, jsonify, g, url_for
 from werkzeug import secure_filename
@@ -59,10 +59,12 @@ def get_auth_token():
 @app.route('/upload', methods = ['POST'])
 @auth.login_required
 def upload():
+    # Get priority
     priority = int(request.form.get('priority', PRIORITY.medium))
     if priority not in PRIORITY.get_values():
         priority = PRIORITY.medium
 
+    # Get output formats
     output_formats = request.form.get('output-formats', '')
     output_formats = list(set(
         filter(
@@ -70,29 +72,36 @@ def upload():
             output_formats.split(';')
         )
     ))
-    
     if not output_formats:
         return jsonify({'Error': 'Must provide valid output formats'}), 400
 
+    # Get file (either directly or via URL)
     file = request.files.get('file')
     allowed_extensions = app.config['ALLOWED_EXTENSIONS']
-
     if file:
         if allowed_filename(file.filename, allowed_extensions):
             filename = secure_filename(file.filename)
-            location = timestamp_filename(filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], location))
+            local_path = os.path.join(app.config['UPLOAD_FOLDER'],
+                timestamp_filename(filename))
+            file.save(local_path)
         else:
             return jsonify({'Error': 'File format not allowed'}), 400
     else:
         fileURL = request.form.get('fileURL')
         if fileURL:
             filename = get_filename_from_url(fileURL)
-            location = download_url(fileURL, app.config['UPLOAD_FOLDER'], timestamp = True)
+            local_path = download_url(fileURL, app.config['UPLOAD_FOLDER'], timestamp = True)
         else:
             return jsonify({'Error': 'File seems screwed'}), 400
     
-    docIds = Conversion.register_file(filename, location, g.user, output_formats, priority)
+    # Upload to remote and remove file from local
+    remote_destination = os.path.join(app.config['REMOTE_INPUT_FOLDER'],
+        get_uuid(), filename)
+    upload_to_remote(remote_destination, local_path)
+    os.remove(local_path)
+
+    # Register the file for conversions and return docIds
+    docIds = Conversion.register_file(filename, remote_destination, g.user, output_formats, priority)
     return jsonify({'Status': STATUS.introduced, 'docIds': docIds})
 
 @app.route('/download', methods = ['POST'])
@@ -103,7 +112,7 @@ def download():
     if conversion and conversion.status == STATUS.completed:
         filename = rename_filename_with_extension(conversion.file_instance.filename,
             conversion.output_format)
-        remote_location = os.path.join(app.config['S3_DUMP_FOLDER'], conversion.doc_id, 
+        remote_location = os.path.join(app.config['REMOTE_DUMP_FOLDER'], conversion.doc_id, 
             filename)
     
         return jsonify({'Signed URL': get_signed_url(remote_location), 'docId': docId}), 200
@@ -138,51 +147,14 @@ def request_fetcher(pm = PidManager('proc/rf.pid')):
         sleep(0.2)
 
 @semisync(callback = output)
-def disk_cleaner(pm = PidManager('proc/dc.pid')):
-    pm.register()
-
-    def extract_epoch_from_filename(filename):
-        if re.match('^\d+_', filename):
-            return int(filename.split('_')[0])
-
-    def is_older_than_n_seconds(epoch, n):
-        return int(time() * 1000) - n * 1000 > epoch
-
-    while True:
-        # Iter output folder
-        for root, _, files in os.walk(app.config['OUTPUT_FOLDER']):
-            for f in files:
-                epoch = extract_epoch_from_filename(f)
-                if not epoch: continue
-
-                if is_older_than_n_seconds(epoch, 300):
-                    os.remove(os.path.join(app.config['OUTPUT_FOLDER'], f))
-
-        # Iter upload foler
-        for root, _, files in os.walk(app.config['UPLOAD_FOLDER']):
-            for f in files:
-                epoch = extract_epoch_from_filename(f)
-                if not epoch: continue
-
-                if is_older_than_n_seconds(epoch, 300):
-                    os.remove(os.path.join(app.config['UPLOAD_FOLDER'], f))
-
-        # Iter after 20 seconds
-        sleep(20)
-
-@semisync(callback = output)
 def app_server():
     app.run()
 
 if __name__ == '__main__':
     rf = PidManager('proc/rf.pid')
-    dc = PidManager('proc/dc.pid')
-
+    
     if not rf.is_running():
         request_fetcher(rf)
-
-    if not dc.is_running():
-        disk_cleaner(dc)
 
     app_server()
     semisync.begin()

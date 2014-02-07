@@ -53,7 +53,7 @@ def download_url(url, destination_dir, timestamp = True):
                 f.write(chunk)
                 f.flush()
                 
-    return local_filename
+    return local_filepath
 
 def get_extension_from_filename(filename):
     extensions = re.findall('\.\w+$', filename)
