@@ -4,7 +4,10 @@ from utils import rename_filename_with_extension, get_extension_from_filename
 from celery import Celery
 import requests
 
-JSON_HEADERS = {'Content-type': 'application/json', 'Accept': 'application/json'}
+JSON_HEADERS = {
+    'Content-type': 'application/json',
+    'Accept': 'application/json'
+}
 
 from models import db
 from config import app as flask_app
@@ -51,7 +54,6 @@ def document_converter(request_ids):
                 }
             )
             # Spawn off upload
-            fm.set_remote_destination(conversion.get_remote_location())
             remote_upload_handler.delay(fm, conversion.id)
         else:
             #print "Unable to convert file"
@@ -74,7 +76,11 @@ def remote_upload_handler(file_manager_obj, conversion_id):
     conversion = Conversion.query.get(conversion_id)
     #print conversion
     callback = conversion.file_instance.account_instance.callback
+
+    file_manager_obj.set_remote_destination(conversion.get_remote_location())
     output_file_url = file_manager_obj.upload_output_file()
+    file_manager_obj.remove_output_file()
+    
     conversion.status = STATUS.completed
     db.session.commit()
 
