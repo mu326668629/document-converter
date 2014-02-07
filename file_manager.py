@@ -42,8 +42,8 @@ class FileManager(object):
     def get_input_file_path(self):
         if not self.input_file_path:
             remote_path = get_signed_url(self.resource_path, self.bucket)
-            self.input_file_path = download_url(remote_path,
-                app.config['UPLOAD_FOLDER'])
+            self.input_file_path = download_url(remote_path, app.config['UPLOAD_FOLDER'],
+                target_filename = os.path.basename(self.resource_path), timestamp = True)
         return self.input_file_path
 
     def get_input_stream(self):
