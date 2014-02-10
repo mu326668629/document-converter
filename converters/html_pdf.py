@@ -36,3 +36,4 @@ class HtmlPdf(GeneralConverter):
             print "Conversion Unsuccessfull"
             return None
         os.system('mv %s %s'%(output_file_name, UPLOAD_FOLDER))
+        return os.path.join(UPLOAD_FOLDER, output_file_name)

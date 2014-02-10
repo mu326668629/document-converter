@@ -42,6 +42,7 @@ class HtmlTxt(GeneralConverter):
         try:
             open(output_file)
             os.system('mv %s %s'%(output_file_name, UPLOAD_FOLDER))
+            return os.path.join(UPLOAD_FOLDER, output_file_name)
         except IOError:
             print "Conversion Unsuccessfull"
             return None
