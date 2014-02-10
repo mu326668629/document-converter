@@ -8,7 +8,7 @@ class ENVIRONMENT:
 DEBUG = True
 ENV = os.environ.get('APP_ENVIRONMENT', ENVIRONMENT.development)
 
-UPLOAD_FOLDER = 'tmp'
+UPLOAD_FOLDER = 'tmp/'
 OUTPUT_FOLDER = 'output/'
 
 S3_BUCKET = 'document_converter'

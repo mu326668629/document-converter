@@ -1,11 +1,12 @@
 import sys
 sys.path.append('..')
-import os
 
 
 CONVERTER_LOCATION = '/Applications/LibreOffice.app/Contents/MacOS/soffice --headless --convert-to html'
 from general import GeneralConverter
 from file_manager import FileManager
+from file_manager import rename_filename_with_extension
+import os
 
 class DocHtml(GeneralConverter):
     """
@@ -17,13 +18,13 @@ class DocHtml(GeneralConverter):
         self.file_batch = input_file_paths
 
     def _single_convert(self, input_file_object):
-        input_file_path = input_file_object.input_file_path
-        target_output_file = input_file_object.set_output_file_path('html')
-        target_output_dir = os.path.dirname(target_output_file)
-        output_file_name = os.path.basename(target_output_file)
+        input_file_path = input_file_object.get_input_file_path()
+        output_file_name = rename_filename_with_extension(
+            os.path.basename(input_file_path), 'html')
         os.system('%s %s'%(CONVERTER_LOCATION, input_file_path))
-        os.system('mv %s %s'%(output_file_name, target_output_dir))
-        if target_output_file:
-            input_file_object.output_file_path = target_output_file
-            input_file_object.output_file_path = target_output_file
-            return input_file_object
+        try:
+            open(output_file_name)
+            os.system('mv %s %s'%(output_file_name, UPLOAD_FOLDER))
+        except IOError:
+            print "Conversion Unsuccessfull"
+            return None

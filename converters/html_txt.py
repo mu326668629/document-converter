@@ -6,6 +6,7 @@ import html2text
 from file_manager import FileManager
 from bs4 import BeautifulSoup
 from utils import rename_filename_with_extension
+from config import UPLOAD_FOLDER
 from file_manager import write_stream
 
 import re
@@ -21,24 +22,26 @@ class HtmlTxt(GeneralConverter):
         self.file_batch = input_file_paths
 
     def _single_convert(self, input_file_object):
-        final_format = self.final_format
         h = html2text.HTML2Text()
-        h.ignore_links = True
-        h.ignore_images = True
-        output_extension = final_format
-        bytestream = input_file_object.get_input_stream()
-        soup = BeautifulSoup(bytestream)
+        h.ignore_links = h.ignore_images = True
+        input_stream = input_file_object.get_input_stream()
+        soup = BeautifulSoup(input_stream)
         invalidAttrs = 'href src width height target style color face size script'.split()
         for attr in invalidAttrs:
             [s.extract() for s in soup(attr)]
-        bytestream = unicode(soup)
+        input_stream = unicode(soup)
         try:
-            outputstream = h.handle(bytestream)
+            output_stream = h.handle(input_stream)
         except:
+            print "Conversion Unsuccessfull"
             return None
         output_file_name = rename_filename_with_extension(
             os.path.basename(input_file_object.get_input_file_path()),
-            final_format)
-        output_file = write_stream(output_file_name, outputstream)
-        if output_file:
-            return input_file_object
+                self.final_format)
+        output_file = write_stream(output_file_name, output_stream)
+        try:
+            open(output_file)
+            os.system('mv %s %s'%(output_file_name, UPLOAD_FOLDER))
+        except IOError:
+            print "Conversion Unsuccessfull"
+            return None

@@ -4,7 +4,10 @@ sys.path.insert(0, '..')
 from general import GeneralConverter
 from xhtml2pdf import pisa
 from file_manager import FileManager
+from utils import rename_filename_with_extension
 from bs4 import BeautifulSoup
+from config import UPLOAD_FOLDER
+import os
 import io
 
 class HtmlPdf(GeneralConverter):
@@ -17,20 +20,19 @@ class HtmlPdf(GeneralConverter):
         self.file_batch = file_objects
         
     def _single_convert(self, input_file_object):
-        final_format = self.final_format
-        bytestream = input_file_object.get_input_stream()
-        soup = BeautifulSoup(bytestream)
+        input_stream = input_file_object.get_input_stream()
+        soup = BeautifulSoup(input_stream)
         invalidAttrs = 'href src width height target style color face size script'.split()
         for attr in invalidAttrs:
             [s.extract() for s in soup(attr)]
-        bytestream = unicode(soup)
+        input_stream = unicode(soup)
         output_file_name = rename_filename_with_extension(
             os.path.basename(input_file_object.get_input_file_path()),
-            final_format)
+            self.final_format)
         output_file = io.open(output_file_name, 'w+b')
         try:
             pisa.CreatePDF(bytestream, dest=output_file)
         except:
+            print "Conversion Unsuccessfull"
             return None
-        if output_file_name:
-            return input_file_object
+        os.system('mv %s %s'%(output_file_name, UPLOAD_FOLDER))

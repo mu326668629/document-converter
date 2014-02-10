@@ -1,9 +1,11 @@
 import sys
 sys.path.append('..')
-sys.path.append('.')
 
 from general import GeneralConverter
 from file_manager import FileManager
+from file_manager import rename_filename_with_extension
+from config import OUTPUT_FOLDER
+from config import UPLOAD_FOLDER
 from subprocess import call
 import urlparse
 import os
@@ -19,13 +21,13 @@ class PdfHtml(GeneralConverter):
         self.file_batch = input_file_objects
 
     def _single_convert(self, input_file_object):
-        input_file = input_file_object.input_file_path
-        target_output_file = input_file_object.set_output_file_path('html')
-        target_output_dir = os.path.dirname(target_output_file)
-        output_file_name = os.path.basename(target_output_file)
+        input_file = input_file_object.get_input_file_path()
+        output_file_name = rename_filename_with_extension(
+            os.path.basename(input_file), 'html')
         os.system('pdf2htmlEX %s'%input_file)
-        os.system('mv %s %s'%(output_file_name, target_output_dir))
-        if target_output_file:
-            input_file_object.output_file_path = target_output_file
-            input_file_object.output_file_path = target_output_file
-            return input_file_object
+        try:
+            open(output_file_name)
+            os.system('mv %s %s'%(output_file_name, UPLOAD_FOLDER))
+        except IOError:
+            print "Conversion Unsuccessfull"
+            return None
