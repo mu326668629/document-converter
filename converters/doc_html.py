@@ -6,6 +6,7 @@ CONVERTER_LOCATION = '/Applications/LibreOffice.app/Contents/MacOS/soffice --hea
 from general import GeneralConverter
 from file_manager import FileManager
 from file_manager import rename_filename_with_extension
+from config import UPLOAD_FOLDER
 import os
 
 class DocHtml(GeneralConverter):

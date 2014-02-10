@@ -4,7 +4,6 @@ sys.path.append('..')
 from general import GeneralConverter
 from file_manager import FileManager
 from file_manager import rename_filename_with_extension
-from config import OUTPUT_FOLDER
 from config import UPLOAD_FOLDER
 from subprocess import call
 import urlparse
