@@ -31,6 +31,7 @@ def convert(input_files_objects, output_formats):
      file_path in temp_files_paths]
     for input_file_object, output_file_path in zip(input_files_objects, output_files_paths):
         input_file_object.set_output_file_path(output_file_path)
+        input_file_object.converted = True
     return input_files_objects
         
 
