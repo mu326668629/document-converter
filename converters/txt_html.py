@@ -24,7 +24,7 @@ class TxtHtml(GeneralConverter):
         try:
             output_stream = markdown2.markdown(input_stream)
         except:
-            print "Conversion Unsuccessfull"
+            print "Conversion Unsuccessfull for txt_html"
             return None
         output_file_name = rename_filename_with_extension(
             os.path.basename(input_file_object.get_input_file_path()),
@@ -35,5 +35,5 @@ class TxtHtml(GeneralConverter):
             os.system('mv %s %s'%(output_file_name, UPLOAD_FOLDER))
             return os.path.join(UPLOAD_FOLDER, output_file_name)
         except IOError:
-            print "Conversion Unsuccessfull"
+            print "Conversion Unsuccessfull for txt_html"
             return None

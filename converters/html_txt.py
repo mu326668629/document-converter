@@ -33,7 +33,7 @@ class HtmlTxt(GeneralConverter):
         try:
             output_stream = h.handle(input_stream)
         except:
-            print "Conversion Unsuccessfull"
+            print "Conversion Unsuccessfull for html_txt"
             return None
         output_file_name = rename_filename_with_extension(
             os.path.basename(input_file_object.get_input_file_path()),
@@ -44,5 +44,5 @@ class HtmlTxt(GeneralConverter):
             os.system('mv %s %s'%(output_file_name, UPLOAD_FOLDER))
             return os.path.join(UPLOAD_FOLDER, output_file_name)
         except IOError:
-            print "Conversion Unsuccessfull"
+            print "Conversion Unsuccessfull for html_txt"
             return None

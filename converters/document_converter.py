@@ -33,5 +33,3 @@ def convert(input_files_objects, output_formats):
         input_file_object.set_output_file_path(output_file_path)
         input_file_object.converted = True
     return input_files_objects
-        
-

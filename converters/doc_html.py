@@ -28,5 +28,5 @@ class DocHtml(GeneralConverter):
             os.system('mv %s %s'%(output_file_name, UPLOAD_FOLDER))
             return os.path.join(UPLOAD_FOLDER, output_file_name)
         except IOError:
-            print "Conversion Unsuccessfull"
+            print "Conversion Unsuccessfull for doc_html"
             return None
