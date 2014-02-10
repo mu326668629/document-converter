@@ -26,12 +26,12 @@ def write_stream(destination, stream):
         return destination
 
 class FileManager(object):
-    def __init__(self, resource_path, **kwargs):
+    def __init__(self, resource_path, input_file_path = None, **kwargs):
         self.resource_path = resource_path
         self.bucket = kwargs.get('bucket', AWS_S3_BUCKET)
         self.bucket_key = Key(self.bucket)
         
-        self.input_file_path = None
+        self.input_file_path = input_file_path
         self.output_file_path = None
         self.remote_destination = None
         self.converted = False
