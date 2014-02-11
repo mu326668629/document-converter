@@ -23,7 +23,7 @@ def convert(input_files_objects, output_formats):
                 interim_files_objects.append(FileManager(None, input_file_path = interim_file_path))
             else:
                 interim_files_objects.append(None)
-    for i, interim_file_object in enumerate(interim_file_object):
+    for i, interim_file_object in enumerate(interim_files_objects):
         if interim_file_object:
             output_file_name = os.path.basename(interim_file_object.get_input_file_path())
             os.system('mv %s %s'%(interim_file_object.get_input_file_path(), OUTPUT_FOLDER))
