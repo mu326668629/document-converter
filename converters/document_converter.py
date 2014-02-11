@@ -29,6 +29,6 @@ def convert(input_files_objects, output_formats):
             output_file_name = os.path.basename(interim_file_object.get_input_file_path())
             os.system('mv %s %s'%(interim_file_object.get_input_file_path(), OUTPUT_FOLDER))
             input_files_objects[i].set_output_file_path(os.path.join(OUTPUT_FOLDER, output_file_name))
-            input_files_objects[i].is_converted = True
+            input_files_objects[i].converted = True
     return input_files_objects
 
