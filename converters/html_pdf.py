@@ -23,37 +23,41 @@ class HtmlPdf(GeneralConverter):
         self.file_batch = file_objects
         
     def _single_convert(self, input_file_object):
-        input_file_path = input_file_object.get_input_file_path()
-        h = html2text.HTML2Text()
-        h.ignore_links = h.ignore_images = True
-        input_plain_text = h.handle(open(input_file_path).read())
-        file_is_cjk = check_if_cjk(input_plain_text)
-        output_file_name = rename_filename_with_extension(
-            os.path.basename(input_file_path), 'html')
-        if file_is_cjk:
-            os.system(ABIWORD_CONVERT%(output_file_name, input_file_path))
-        else:
-            input_stream = input_file_object.get_input_stream()
-            soup = BeautifulSoup(input_stream)
-            invalidAttrs = 'href src width height target style color face size script'.split()
-            for attr in invalidAttrs:
-                [s.extract() for s in soup(attr)]
-            input_stream = unicode(soup)
+        if input_file_object:
+            input_file_path = input_file_object.get_input_file_path()
+            h = html2text.HTML2Text()
+            h.ignore_links = h.ignore_images = True
+            input_plain_text = h.handle(open(input_file_path).read())
+            file_is_cjk = check_if_cjk(input_plain_text)
             output_file_name = rename_filename_with_extension(
-                os.path.basename(input_file_object.get_input_file_path()),
-                self.final_format)
-            output_file = io.open(output_file_name, 'w+b')
+                os.path.basename(input_file_path), 'html')
+            if file_is_cjk:
+                os.system(ABIWORD_CONVERT%(output_file_name, input_file_path))
+            else:
+                input_stream = input_file_object.get_input_stream()
+                soup = BeautifulSoup(input_stream)
+                invalidAttrs = 'href src width height target style color face size script'.split()
+                for attr in invalidAttrs:
+                    [s.extract() for s in soup(attr)]
+                input_stream = unicode(soup)
+                output_file_name = rename_filename_with_extension(
+                    os.path.basename(input_file_object.get_input_file_path()),
+                    self.final_format)
+                output_file = io.open(output_file_name, 'w+b')
+                try:
+                    pisa.CreatePDF(bytestream, dest=output_file)
+                except:
+                    print "Conversion Unsuccessfull for html_pdf"
+                    os.remove(output_file_name)
+                    return None
             try:
-                pisa.CreatePDF(bytestream, dest=output_file)
-            except:
+                open(output_file_name)
+                os.system('mv %s %s'%(output_file_name, UPLOAD_FOLDER))
+                return os.path.join(UPLOAD_FOLDER, output_file_name)
+            except IOError:
                 print "Conversion Unsuccessfull for html_pdf"
                 return None
-        try:
-            open(output_file_name)
-            os.system('mv %s %s'%(output_file_name, UPLOAD_FOLDER))
-            return os.path.join(UPLOAD_FOLDER, output_file_name)
-        except IOError:
-            print "Conversion Unsuccessfull for html_pdf"
+        else:
             return None
 
 def check_if_cjk(str):
