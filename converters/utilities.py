@@ -6,13 +6,14 @@ from html_txt import HtmlTxt
 from pdf_html import PdfHtml
 from txt_html import TxtHtml
 from doc_html import DocHtml
+from doc_pdf import DocPdf
 import re
 
 
 AVAILABLE_FORMATS = ['pdf', 'html', 'txt', 'doc']
 
 AVAILABLE_CONVERTERS = [(HtmlPdf, 'htmlpdf'), (HtmlTxt, 'htmltxt'), (PdfHtml, 'pdfhtml'),
-                        (TxtHtml, 'txthtml'), (DocHtml, 'dochtml')]
+                        (TxtHtml, 'txthtml'), (DocHtml, 'dochtml'), (DocPdf, 'docpdf')]
 
 FORMAT_RE = [re.compile('.*%s'%fmt) for fmt in AVAILABLE_FORMATS]
 
