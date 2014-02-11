@@ -8,6 +8,7 @@ from file_manager import FileManager
 from utils import rename_filename_with_extension
 from bs4 import BeautifulSoup
 from config import UPLOAD_FOLDER
+import pdfkit
 import os
 import io
 
@@ -21,11 +22,11 @@ class HtmlPdf(GeneralConverter):
         self.initial_format = 'html'
         self.final_format = 'pdf'
         self.file_batch = file_objects
-        
+
     def _single_convert(self, input_file_object):
         if input_file_object:
-            input_file_path = input_file_object.get_input_file_path()
             h = html2text.HTML2Text()
+            input_file_path = input_file_object.get_input_file_path()
             h.ignore_links = h.ignore_images = True
             file_is_cjk = False
             try:
@@ -39,17 +40,10 @@ class HtmlPdf(GeneralConverter):
                 os.system(ABIWORD_CONVERT%(output_file_name, input_file_path))
             else:
                 input_stream = input_file_object.get_input_stream()
-                soup = BeautifulSoup(input_stream)
-                invalidAttrs = 'href src width height target style color face size script'.split()
-                for attr in invalidAttrs:
-                    [s.extract() for s in soup(attr)]
-                input_stream = unicode(soup)
-                output_file_name = rename_filename_with_extension(
-                    os.path.basename(input_file_object.get_input_file_path()),
-                    self.final_format)
-                output_file = io.open(output_file_name, 'w+b')
+                output_file_name = rename_filename_with_extension(os.path.basename(input_file_path), 'pdf')
+                output_file = open(output_file_name, 'w+')
                 try:
-                    pisa.CreatePDF(bytestream, dest=output_file)
+                    pisa.CreatePDF(input_stream, output_file)
                 except:
                     print "Conversion Unsuccessfull for html_pdf"
                     os.system('rm %s'%output_file_name)
@@ -61,20 +55,6 @@ class HtmlPdf(GeneralConverter):
             except IOError:
                 print "Conversion Unsuccessfull for html_pdf"
                 return None
+
         else:
             return None
-
-def check_if_cjk(str):
-    '''
-    rudimentary CJK detection
-    seems like a lot of it is between these two ranges.
-    cf. http://www.alanwood.net/unicode/fontsbyrange.html
-    '''
-    ranges = [(12272, 12287), (19968, 40959)]
-    for i in str:
-        j = ord(i)
-        for (low, high) in ranges:
-            if j > low and j < high:
-                return True
-        return False
-
