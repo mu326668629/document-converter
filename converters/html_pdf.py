@@ -8,7 +8,6 @@ from file_manager import FileManager
 from utils import rename_filename_with_extension
 from bs4 import BeautifulSoup
 from config import UPLOAD_FOLDER
-import pdfkit
 import os
 import io
 
