@@ -27,8 +27,12 @@ class HtmlPdf(GeneralConverter):
             input_file_path = input_file_object.get_input_file_path()
             h = html2text.HTML2Text()
             h.ignore_links = h.ignore_images = True
-            input_plain_text = h.handle(open(input_file_path).read())
-            file_is_cjk = check_if_cjk(input_plain_text)
+            file_is_cjk = False
+            try:
+                input_plain_text = h.handle(open(input_file_path).read())
+                file_is_cjk = check_if_cjk(input_plain_text)
+            except:
+                pass
             output_file_name = rename_filename_with_extension(
                 os.path.basename(input_file_path), 'html')
             if file_is_cjk:
