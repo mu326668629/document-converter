@@ -2,8 +2,8 @@ import os
 import re
 from utils import (get_uuid, timestamp_filename, allowed_filename,
     get_filename_from_url, download_url, PidManager)
-from config import app, db
-from models import File, Conversion, Account, STATUS, PRIORITY
+from config import app
+from models import db, File, Conversion, Account, STATUS, PRIORITY
 from semisync import semisync
 from time import sleep, time
 from tasks import document_converter
@@ -114,11 +114,12 @@ def download():
     conversion = Conversion.get_by_doc_id(docId, g.user.id)
     if conversion and conversion.status == STATUS.completed:
         return jsonify({
+            'Status': conversion.status,
             'Signed URL': get_signed_url(conversion.get_remote_location()),
             'docId': docId
             }
         ), 200
-    return jsonify({'Error': 'Failed to get conversion'}), 404
+    return jsonify({'Status': conversion.status, 'docId': docId}), 200
 
 @app.route('/dummy_callback', methods = ['POST'])
 def dummy_callback():
