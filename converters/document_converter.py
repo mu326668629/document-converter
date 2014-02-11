@@ -6,6 +6,7 @@ from utilities import class_selector
 from utilities import remove_duplicates
 from file_manager import FileManager
 from config import OUTPUT_FOLDER
+import os
 
 def convert(input_files_objects, output_formats):
     sample_input_file = input_files_objects[0].get_input_file_path()
