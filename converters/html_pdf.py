@@ -48,7 +48,7 @@ class HtmlPdf(GeneralConverter):
                     pisa.CreatePDF(bytestream, dest=output_file)
                 except:
                     print "Conversion Unsuccessfull for html_pdf"
-                    os.remove(output_file_name)
+                    os.system('rm %s'%output_file_name)
                     return None
             try:
                 open(output_file_name)
