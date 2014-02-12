@@ -147,7 +147,7 @@ def request_fetcher(pm = PidManager('proc/rf.pid')):
                 db.session.commit()
 
         # Iter after sleep
-        sleep(0.2)
+        sleep(0.15)
 
 @semisync(callback = output)
 def app_server():
