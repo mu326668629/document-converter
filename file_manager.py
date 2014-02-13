@@ -4,7 +4,7 @@ from config import app
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 
-from utils import download_url, rename_filename_with_extension
+from utils import download_url, rename_filename_with_extension, gzip_file
 
 AWS_S3_CONNECTION = S3Connection()
 AWS_S3_BUCKET = AWS_S3_CONNECTION.get_bucket(app.config['S3_BUCKET'])
@@ -66,9 +66,11 @@ class FileManager(object):
         self.remote_destination = remote_destination
 
     def upload_output_file(self):
+        self.output_file_path = gzip_file(self.output_file_path, unlink = True)
         if self.remote_destination:
             self.bucket_key.key = self.remote_destination
-            self.bucket_key.set_contents_from_filename(self.output_file_path)
+            self.bucket_key.set_contents_from_filename(self.output_file_path,
+                headers = {'Content-Encoding': 'gzip'})
             return get_signed_url(self.remote_destination, self.bucket)
         else:
             raise Exception("REMOTE DESTINATION not provided")

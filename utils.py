@@ -1,5 +1,6 @@
 import re
 import os
+import gzip
 import uuid
 import time
 import magic
@@ -81,6 +82,17 @@ def get_mime_type(file_path):
             file_path.encode('utf-8'), strict=True)
         # accepts unicode as well. For consistency using utf
     return mime_type
+
+def gzip_file(in_file, unlink = False):
+    in_data = open(in_file, "rb").read()
+    out_gz = in_file + '.gz'
+    gzf = gzip.open(out_gz, "wb")
+    gzf.write(in_data)
+    gzf.close()
+
+    if unlink:
+        os.remove(in_file)
+    return out_gz
 
 class Command(object):
     def __init__(self, cmd):
