@@ -1,7 +1,7 @@
 import os
 import time
-from models import STATUS, PRIORITY, File, Conversion, Account
-from config import db, app
+from models import db, STATUS, PRIORITY, File, Conversion, Account
+from config import app
 from utils import Command
 from semisync import semisync
 import requests
