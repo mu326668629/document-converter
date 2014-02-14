@@ -8,7 +8,6 @@ from bs4 import BeautifulSoup
 from utils import rename_filename_with_extension
 from config import UPLOAD_FOLDER
 from file_manager import write_stream
-
 import re
 import os
 
@@ -30,7 +29,7 @@ class HtmlTxt(GeneralConverter):
             invalidAttrs = 'href src width height target style color face size script'.split()
             for attr in invalidAttrs:
                 [s.extract() for s in soup(attr)]
-                input_stream = unicode(soup)
+            input_stream = unicode(soup)
             try:
                 output_stream = h.handle(input_stream)
             except:
