@@ -4,7 +4,7 @@ import json
 __all__ = ['create_user', 'get_auth_token', 'upload_file', 'upload_via_url', 'download']
 
 # Change it to the location where doc converter is hosted
-BASE_URL = 'http://127.0.0.1:5000'
+BASE_URL = 'http://127.0.0.1:8200'
 
 JSON_POST_HEADERS = {
     'Content-type': 'application/json',
