@@ -1,6 +1,5 @@
 markdown2
 html2text
-xhtml2pdf
 python-magic
 beautifulsoup4
 requests
@@ -10,3 +9,4 @@ semisync
 Celery
 boto
 psycopg2
+gunicorn
