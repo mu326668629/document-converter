@@ -10,3 +10,6 @@ Celery
 boto
 psycopg2
 gunicorn
+redis
+pytz
+supervisor
