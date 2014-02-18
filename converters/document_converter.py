@@ -17,7 +17,7 @@ def convert(input_files_objects, output_formats):
     for converter, expression in converters:
         obj = converter(interim_files_objects)
         interim_files_paths = obj.convert()
-        [interim_file_object.remove_input_file() for interim_file_object in interim_files_objects]
+        [interim_file_object.remove_input_file() for interim_file_object in interim_files_objects if interim_file_object]
         interim_files_objects = []
         for interim_file_path in interim_files_paths:
             if interim_file_path:
