@@ -21,7 +21,7 @@ def upload_to_remote(destination, filepath, bucket = AWS_S3_BUCKET):
     return destination
 
 def write_stream(destination, stream):
-    with io.open(destination, 'w+') as f:
+    with io.open(destination, 'w+', encoding='utf-8') as f:
         f.write(stream)
         return destination
 
@@ -47,7 +47,7 @@ class FileManager(object):
         return self.input_file_path
 
     def get_input_stream(self):
-        return io.open(self.get_input_file_path()).read()
+        return io.open(self.get_input_file_path(), encoding='utf-8').read()
 
     def remove_input_file(self):
         os.remove(self.input_file_path)
