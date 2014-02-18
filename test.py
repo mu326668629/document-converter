@@ -228,15 +228,7 @@ def test():
 
     return (True, )
 
-@semisync(callback = output, dependencies = [construct_boiler_db, ])
-def run_app():
-    mainScript = Command('python app.py')
-    mainScript.run(timeout = 3600)
-    print "Done with Main script..."
-    return (True, )
-
 if __name__ == "__main__":
     construct_boiler_db()
-    run_app()
     test()
     semisync.begin()

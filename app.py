@@ -4,9 +4,6 @@ from utils import (get_uuid, timestamp_filename, allowed_filename,
     get_filename_from_url, download_url, PidManager)
 from config import app
 from models import db, File, Conversion, Account, STATUS, PRIORITY
-from semisync import semisync
-from time import sleep, time
-from tasks import document_converter
 from file_manager import get_signed_url, upload_to_remote
 
 from flask import abort, request, jsonify, g, url_for
@@ -126,38 +123,5 @@ def dummy_callback():
     print request.data
     return jsonify({'success': 'ok'})
 
-def output():
-    pass
-
-@semisync(callback = output)
-def request_fetcher(pm = PidManager('proc/rf.pid')):
-    pm.register()
-    while True:
-        # Get conversions by priority
-        conversions = Conversion.get_requests_by_priority(limit = 1)
-
-        # Forward request ids to document converter
-        conversion_ids = map(lambda conversion: conversion.id, conversions)
-        if conversion_ids:
-            document_converter.delay(conversion_ids)
-
-            # Mark Queued
-            for conversion in conversions:
-                conversion.status = STATUS.queued
-                db.session.commit()
-
-        # Iter after sleep
-        sleep(0.15)
-
-@semisync(callback = output)
-def app_server():
-    app.run()
-
 if __name__ == '__main__':
-    rf = PidManager('proc/rf.pid')
-    
-    if not rf.is_running():
-        request_fetcher(rf)
-
-    app_server()
-    semisync.begin()
+    app.run()
