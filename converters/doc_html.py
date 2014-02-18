@@ -2,7 +2,7 @@ import sys
 sys.path.append('..')
 
 
-CONVERTER_LOCATION = '/Applications/LibreOffice.app/Contents/MacOS/soffice --headless --convert-to html'
+CONVERTER_LOCATION = 'libreoffice --headless --convert-to html'
 from general import GeneralConverter
 from file_manager import FileManager
 from file_manager import rename_filename_with_extension

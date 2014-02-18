@@ -13,7 +13,7 @@ from boto.s3.key import Key
 AWS_S3_CONNECTION = S3Connection()
 bucket = AWS_S3_CONNECTION.get_bucket(app.config['S3_BUCKET'])
 
-BASE_URL = 'http://127.0.0.1:5000'
+BASE_URL = 'http://127.0.0.1:8200'
 JSON_POST_HEADERS = {'Content-type': 'application/json', 'Accept': 'application/json'}
 
 # dummy_auth = requests.auth.HTTPBasicAuth(username, password)
