@@ -24,7 +24,7 @@ class HtmlTxt(GeneralConverter):
         if input_file_object:
             h = html2text.HTML2Text()
             h.ignore_links = h.ignore_images = True
-            input_stream = input_file_object.get_input_stream()
+            input_stream = input_file_object.get_input_stream().encode('utf-8')
             soup = BeautifulSoup(input_stream)
             invalidAttrs = 'href src width height target style color face size script'.split()
             for attr in invalidAttrs:
