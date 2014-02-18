@@ -1,3 +1,2 @@
-. bin/activate;
-. /home/ubuntu/aws_key.sh;
-python request_fetcher.py;
+. bin/activate
+python2.7 request_fetcher.py

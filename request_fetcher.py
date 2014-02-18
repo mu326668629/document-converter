@@ -27,3 +27,4 @@ if __name__ == '__main__':
     
     if not rf.is_running():
         request_fetcher(rf)
+
