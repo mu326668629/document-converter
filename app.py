@@ -1,10 +1,11 @@
 import os
 import re
 from utils import (get_uuid, timestamp_filename, allowed_filename,
-    get_filename_from_url, download_url, PidManager)
+    get_filename_from_url, download_url)
 from config import app
 from models import db, File, Conversion, Account, STATUS, PRIORITY
 from file_manager import get_signed_url, upload_to_remote
+from tasks import request_fetcher
 
 from flask import abort, request, jsonify, g, url_for
 from werkzeug import secure_filename
@@ -102,6 +103,10 @@ def upload():
     # Register the file for conversions and return docIds
     docIds = Conversion.register_file(filename, remote_destination,
         g.user, output_formats, priority)
+
+    # Call request fetcher
+    request_fetcher.delay()
+    
     return jsonify({'Status': STATUS.introduced, 'docIds': docIds})
 
 @app.route('/download', methods = ['POST'])
