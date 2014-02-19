@@ -116,30 +116,30 @@ class Command(object):
             thread.join()
         print self.process.returncode
 
-class PidManager(object):
-    def __init__(self, pid_file_path):
-        self.pid_file_path = pid_file_path
-        if not os.path.isfile(self.pid_file_path):
-            self._write('10000000')
+# class PidManager(object):
+#     def __init__(self, pid_file_path):
+#         self.pid_file_path = pid_file_path
+#         if not os.path.isfile(self.pid_file_path):
+#             self._write('10000000')
 
-    def _write(self, val):
-        pid_file = open(self.pid_file_path, 'w')
-        pid_file.write(str(val))
-        pid_file.close()
+#     def _write(self, val):
+#         pid_file = open(self.pid_file_path, 'w')
+#         pid_file.write(str(val))
+#         pid_file.close()
 
-    def _read_pid(self):
-        pid_file = open(self.pid_file_path, 'r')
-        pid = int(pid_file.read().strip())
-        pid_file.close()
-        return pid
+#     def _read_pid(self):
+#         pid_file = open(self.pid_file_path, 'r')
+#         pid = int(pid_file.read().strip())
+#         pid_file.close()
+#         return pid
 
-    def register(self):
-        self._write(str(os.getpid()))
+#     def register(self):
+#         self._write(str(os.getpid()))
 
-    def is_running(self):
-        pid = self._read_pid()
-        try:
-            os.kill(pid, 0)
-            return True
-        except OSError:
-            return False
+#     def is_running(self):
+#         pid = self._read_pid()
+#         try:
+#             os.kill(pid, 0)
+#             return True
+#         except OSError:
+#             return False

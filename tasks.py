@@ -3,6 +3,7 @@ import json
 from utils import rename_filename_with_extension, get_extension_from_filename
 from celery import Celery
 import requests
+from time import sleep
 
 JSON_HEADERS = {
     'Content-type': 'application/json',
@@ -10,7 +11,6 @@ JSON_HEADERS = {
 }
 
 from models import db
-from config import app as flask_app
 from models import Account, File, Conversion, STATUS
 
 from converters.document_converter import convert
@@ -20,6 +20,22 @@ db.create_scoped_session()
 
 BROKER_URL = 'redis://localhost:6379/0'
 app = Celery('tasks', broker=BROKER_URL)
+
+@app.task
+def request_fetcher():
+    # Get conversions by priority
+    conversions = Conversion.get_requests_by_priority(limit = 3)
+
+    # Forward request ids to document converter
+    conversion_ids = map(lambda conversion: conversion.id, conversions)
+
+    if conversion_ids:
+        document_converter.delay(conversion_ids)
+
+        # Mark Queued
+        for conversion in conversions:
+            conversion.status = STATUS.queued
+            db.session.commit()
 
 @app.task
 def document_converter(request_ids):
