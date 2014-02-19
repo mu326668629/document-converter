@@ -26,7 +26,7 @@ class HtmlTxt(GeneralConverter):
             h.ignore_links = h.ignore_images = True
             try:
                 input_stream = input_file_object.get_input_stream()
-            except:
+            except UnicodeDecodeError:
                 return None
             soup = BeautifulSoup(input_stream)
             invalidAttrs = 'href src width height target style color face size script'.split()
