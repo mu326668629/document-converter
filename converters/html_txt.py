@@ -26,7 +26,9 @@ class HtmlTxt(GeneralConverter):
             h.ignore_links = h.ignore_images = True
             try:
                 input_stream = input_file_object.get_input_stream()
-            except UnicodeDecodeError:
+            except UnicodeDecodeError, e:
+                print e
+                print "Conversion Unsuccessfull for html_txt"
                 return None
             soup = BeautifulSoup(input_stream)
             invalidAttrs = 'href src width height target style color face size script'.split()
@@ -35,7 +37,8 @@ class HtmlTxt(GeneralConverter):
             input_stream = unicode(soup)
             try:
                 output_stream = h.handle(input_stream)
-            except:
+            except e:
+                print e
                 print "Conversion Unsuccessfull for html_txt"
                 return None
             output_file_name = rename_filename_with_extension(
@@ -46,7 +49,8 @@ class HtmlTxt(GeneralConverter):
                 open(output_file)
                 os.system('mv %s %s'%(output_file_name, UPLOAD_FOLDER))
                 return os.path.join(UPLOAD_FOLDER, output_file_name)
-            except IOError:
+            except e:
+                print e
                 print "Conversion Unsuccessfull for html_txt"
                 return None
         else:
