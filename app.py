@@ -13,6 +13,15 @@ from flask.ext.httpauth import HTTPBasicAuth
 
 auth = HTTPBasicAuth()
 
+TEXT_STATUS = {
+    STATUS.introduced : 'introduced',
+    STATUS.queued : 'queued',
+    STATUS.converted : 'converted',
+    STATUS.completed : 'completed',
+    STATUS.failed : 'failed',
+}
+
+
 @auth.verify_password
 def verify_password(username_or_token, password):
     # first try to authenticate by token
@@ -107,7 +116,7 @@ def upload():
     # Call request fetcher
     request_fetcher.delay()
     
-    return jsonify({'Status': STATUS.introduced, 'docIds': docIds})
+    return jsonify({'Status': TEXT_STATUS[STATUS.introduced], 'docIds': docIds})
 
 @app.route('/download', methods = ['POST'])
 @auth.login_required
@@ -116,12 +125,12 @@ def download():
     conversion = Conversion.get_by_doc_id(docId, g.user.id)
     if conversion and conversion.status == STATUS.completed:
         return jsonify({
-            'Status': conversion.status,
+            'Status': TEXT_STATUS[conversion.status],
             'Signed URL': get_signed_url(conversion.get_remote_location()),
             'docId': docId
             }
         ), 200
-    return jsonify({'Status': conversion.status, 'docId': docId}), 200
+    return jsonify({'Status': TEXT_STATUS[conversion.status], 'docId': docId}), 200
 
 @app.route('/dummy_callback', methods = ['POST'])
 def dummy_callback():

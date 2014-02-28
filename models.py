@@ -14,6 +14,11 @@ class STATUS:
     failed = 5
 
 class PRIORITY:
+    """
+    We will accept priority in integer. This will let the client
+    have more priority flexibility. 
+    NOTE: the lower the value, the higher the priority
+    """
     high = 0
     medium = 1
     low = 2
