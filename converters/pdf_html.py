@@ -24,13 +24,12 @@ class PdfHtml(GeneralConverter):
             input_file = input_file_object.get_input_file_path()
             output_file_name = rename_filename_with_extension(
                 os.path.basename(input_file), 'html')
-            os.system('pdf2htmlEX %s'%input_file)
+            os.system('pdf2htmlEX --fit-width 780 %s'%input_file)
             try:
                 open(output_file_name)
                 os.system('mv %s %s'%(output_file_name, UPLOAD_FOLDER))
                 return os.path.join(UPLOAD_FOLDER, output_file_name)
             except IOError:
-                print "Conversion Unsuccessfull for pdf_html"
                 return None
         else:
             return None

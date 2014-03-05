@@ -116,7 +116,7 @@ def upload():
     # Call request fetcher
     request_fetcher.delay()
     
-    return jsonify({'Status': TEXT_STATUS[STATUS.introduced], 'docIds': docIds})
+    return jsonify({'status': STATUS.introduced, 'doc_ids': docIds})
 
 @app.route('/download', methods = ['POST'])
 @auth.login_required
@@ -125,12 +125,12 @@ def download():
     conversion = Conversion.get_by_doc_id(docId, g.user.id)
     if conversion and conversion.status == STATUS.completed:
         return jsonify({
-            'Status': TEXT_STATUS[conversion.status],
-            'Signed URL': get_signed_url(conversion.get_remote_location()),
-            'docId': docId
+            'status': conversion.status,
+            'signed_url': get_signed_url(conversion.get_remote_location()),
+            'doc_id': docId
             }
         ), 200
-    return jsonify({'Status': TEXT_STATUS[conversion.status], 'docId': docId}), 200
+    return jsonify({'status': conversion.status, 'doc_id': docId}), 200
 
 @app.route('/dummy_callback', methods = ['POST'])
 def dummy_callback():
