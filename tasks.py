@@ -21,6 +21,15 @@ db.create_scoped_session()
 BROKER_URL = 'redis://localhost:6379/0'
 app = Celery('tasks', broker=BROKER_URL)
 
+TEXT_STATUS = {
+    STATUS.introduced : 'introduced',
+    STATUS.queued : 'queued',
+    STATUS.converted : 'converted',
+    STATUS.completed : 'completed',
+    STATUS.failed : 'failed',
+}
+
+
 @app.task
 def request_fetcher():
     # Get conversions by priority
@@ -42,14 +51,13 @@ def document_converter(request_ids):
     # Get all conversion requests.
     for request_id in request_ids:
         conversion = Conversion.query.get(request_id)
-
         # Request callback
         callback = conversion.file_instance.account_instance.callback
         
         # POST: informing QUEUED
         post_handler.delay(callback, {
-            'Status': conversion.status,
-            'docId': conversion.doc_id
+            'status': TEXT_STATUS[conversion.status],
+            'doc_id': conversion.doc_id
             }
         )
 
@@ -65,8 +73,8 @@ def document_converter(request_ids):
             
             # Post status to callback
             post_handler.delay(callback, {
-                'Status': conversion.status,
-                'docId': conversion.doc_id
+                'status': TEXT_STATUS[conversion.status],
+                'doc_id': conversion.doc_id
                 }
             )
             # Spawn off upload
@@ -78,14 +86,14 @@ def document_converter(request_ids):
             db.session.commit()
 
             post_handler.delay(callback, {
-                'Status': conversion.status,
-                'docId': conversion.doc_id
+                'status': TEXT_STATUS[conversion.status],
+                'doc_id': conversion.doc_id
                 }
             )
 
 @app.task
 def post_handler(url, data):
-    requests.post(url, data=json.dumps(data), headers=JSON_HEADERS)
+    requests.post(url, data=json.dumps(data))# headers=JSON_HEADERS)
 
 @app.task
 def remote_upload_handler(file_manager_obj, conversion_id):
@@ -102,8 +110,8 @@ def remote_upload_handler(file_manager_obj, conversion_id):
 
     # POST signed URL with status and doc_id
     post_handler.delay(callback, {
-        'Status': conversion.status,
-        'Signed URL': output_file_url,
-        'docId': conversion.doc_id
+        'status': TEXT_STATUS[conversion.status],
+        'signed_url': output_file_url,
+        'doc_id': conversion.doc_id
         }
     )
