@@ -134,3 +134,9 @@ class Conversion(db.Model):
                 .join(File)\
                 .order_by(File.priority)\
                 .limit(limit).all()
+
+    def get_siblings(self):
+        file_instance = self.file_instance
+        query_set = db.session.query(Conversion)
+        return [conversion for conversion in query_set
+                if conversion.file_instance == file_instance]

@@ -16,7 +16,7 @@ auth = HTTPBasicAuth()
 TEXT_STATUS = {
     STATUS.introduced : 'introduced',
     STATUS.queued : 'queued',
-    STATUS.converted : 'converted',
+    STATUS.converted : 'converting',
     STATUS.completed : 'completed',
     STATUS.failed : 'failed',
 }

@@ -1,6 +1,7 @@
 import os
 import json
 from utils import rename_filename_with_extension, get_extension_from_filename
+from file_manager import get_signed_url
 from celery import Celery
 import requests
 from time import sleep
@@ -24,7 +25,7 @@ app = Celery('tasks', broker=BROKER_URL)
 TEXT_STATUS = {
     STATUS.introduced : 'introduced',
     STATUS.queued : 'queued',
-    STATUS.converted : 'converted',
+    STATUS.converted : 'converting',
     STATUS.completed : 'completed',
     STATUS.failed : 'failed',
 }
@@ -108,10 +109,24 @@ def remote_upload_handler(file_manager_obj, conversion_id):
     conversion.status = STATUS.completed
     db.session.commit()
 
-    # POST signed URL with status and doc_id
-    post_handler.delay(callback, {
+    conversion_siblings = conversion.get_siblings()
+    output = []
+
+    if check_conversions_status(conversion_siblings):
+        output = [get_dictionary_request(conversion) for conversion in conversion_siblings]
+        print output
+        post_handler.delay(callback, output)
+
+def check_conversions_status(conversion_instances):
+    for conversion_instance in conversion_instances:
+        if conversion_instance.status == 5:
+            return False
+    return True
+
+def get_dictionary_request(conversion):
+    return {
         'status': TEXT_STATUS[conversion.status],
-        'signed_url': output_file_url,
-        'doc_id': conversion.doc_id
-        }
-    )
+        'signed_url': get_signed_url(conversion.get_remote_location()),
+        'doc_id': conversion.doc_id,
+    }
+        
