@@ -2,7 +2,7 @@ import os
 import re
 from utils import (get_uuid, timestamp_filename, allowed_filename,
     get_filename_from_url, download_url)
-from config import app, mail
+from config import app
 from models import db, File, Conversion, Account, STATUS, PRIORITY
 from file_manager import get_signed_url, upload_to_remote
 from tasks import request_fetcher
@@ -10,7 +10,6 @@ from tasks import request_fetcher
 from flask import abort, request, jsonify, g, url_for
 from werkzeug import secure_filename
 from flask.ext.httpauth import HTTPBasicAuth
-from flask_mail import Message
 
 auth = HTTPBasicAuth()
 
@@ -63,7 +62,6 @@ def get_user(id):
 @auth.login_required
 def get_auth_token():
     token = g.user.generate_auth_token(3153600000)
-    mail.send(msg)
     return jsonify({ 'token': token.decode('ascii'), 'duration': 3153600000 })
 
 @app.route('/upload', methods = ['POST'])

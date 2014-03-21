@@ -14,3 +14,5 @@ redis
 pytz
 supervisor
 alembic
+Flask-Mail
+Flask-ErrorMail
