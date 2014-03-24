@@ -21,6 +21,7 @@ celery==3.1.9
 gunicorn==18.0
 html2text==3.200.3
 html5lib==0.999
+ipdb==0.8
 ipython==1.2.1
 itsdangerous==0.23
 kombu==3.0.14
