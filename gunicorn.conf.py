@@ -9,7 +9,6 @@ graceful_timeout = 30
 limit_request_field_size = 8000
 preload_app = False
 user = None
-daemon = True
 pidfile = None
 umask = 0
 user = None
