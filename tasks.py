@@ -34,7 +34,7 @@ TEXT_STATUS = {
 @app.task
 def request_fetcher():
     # Get conversions by priority
-    conversions = Conversion.get_requests_by_priority(limit = 3)
+    conversions = Conversion.get_requests_by_priority()
 
     # Forward request ids to document converter
     conversion_ids = map(lambda conversion: conversion.id, conversions)
@@ -64,7 +64,7 @@ def document_converter(request_ids):
 
         # Convert document.
         fm = FileManager(conversion.file_instance.location)
-        convert([fm], [conversion.output_format])
+        convert([fm], conversion.output_format)
 
         if fm.is_converted():
             #print conversion, "The file was converted successfully"
@@ -95,6 +95,7 @@ def document_converter(request_ids):
 @app.task
 def post_handler(url, data):
     requests.post(url, data=json.dumps(data))# headers=JSON_HEADERS)
+    request_fetcher.delay()
 
 @app.task
 def remote_upload_handler(file_manager_obj, conversion_id):

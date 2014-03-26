@@ -1,6 +1,10 @@
 import sys
 sys.path.insert(0, '..')
 
+
+CONVERTER_LOCATION = 'libreoffice --headless --convert-to pdf'
+
+
 from general import GeneralConverter
 from xhtml2pdf import pisa
 import html2text
@@ -15,24 +19,17 @@ class HtmlPdf(GeneralConverter):
     """
     This class is for Html-Pdf conversion.
     """
-    def __init__(self, file_objects=[]):
+    def __init__(self, input_file_paths=[]):
         self.initial_format = 'html'
         self.final_format = 'pdf'
-        self.file_batch = file_objects
+        self.file_batch = input_file_paths
 
     def _single_convert(self, input_file_object):
         if input_file_object:
             input_file_path = input_file_object.get_input_file_path()
             output_file_name = rename_filename_with_extension(
                 os.path.basename(input_file_path), 'pdf')
-            output_file = open(output_file_name, 'w+')
-            input_stream = input_file_object.get_input_stream()
-            try:
-                pisa.CreatePDF(input_stream, output_file)
-            except:
-                print "Conversion Unsuccessfull for html_pdf"
-                os.system('rm %s'%output_file_name)
-                return None
+            os.system('%s %s'%(CONVERTER_LOCATION, input_file_path))
             try:
                 open(output_file_name)
                 os.system('mv %s %s'%(output_file_name, UPLOAD_FOLDER))

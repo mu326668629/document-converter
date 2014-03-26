@@ -128,12 +128,15 @@ class Conversion(db.Model):
         return data
 
     @classmethod
-    def get_requests_by_priority(cls, status = STATUS.introduced, limit = 5):
-        return cls.query\
-                .filter_by(status = status)\
-                .join(File)\
-                .order_by(File.priority)\
-                .limit(limit).all()
+    def get_requests_by_priority(cls, status = STATUS.introduced, limit = 3):
+        request_query = cls.query\
+            .filter_by(status = status)\
+            .join(File)\
+            .order_by(File.priority)
+
+        if limit:
+            request_query.limit(limit)
+        return request_query.all()
 
     def get_siblings(self):
         file_instance = self.file_instance
