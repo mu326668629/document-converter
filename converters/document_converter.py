@@ -11,7 +11,7 @@ from file_manager import FileManager
 
 def convert(input_files_objects, output_format):
     pdf_files_objects = convert_to_pdf(input_files_objects)
-    output_files_objects = convert_files(input_files_objects, output_format)
+    output_files_objects = convert_files(pdf_files_objects, output_format)
     set_flags_of_input_file_objects(input_files_objects, output_files_objects)
     return input_files_objects
 
