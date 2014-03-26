@@ -7,7 +7,7 @@ from utilities import get_input_format
 from utilities import set_flags_of_input_file_objects
 from utilities import get_files_objects
 from file_manager import FileManager
-from config import OUTPUT_FOLDER
+
 
 def convert(input_files_objects, output_format):
     pdf_files_objects = convert_to_pdf(input_files_objects)
