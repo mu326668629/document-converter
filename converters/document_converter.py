@@ -1,34 +1,42 @@
 import sys
+
 sys.path.append('..')
 
-from utils import get_file_extension
 from utilities import class_selector
-from utilities import remove_duplicates
+from utilities import get_input_format
+from utilities import set_flags_of_input_file_objects
+from utilities import get_files_objects
 from file_manager import FileManager
 from config import OUTPUT_FOLDER
-import os
 
-def convert(input_files_objects, output_formats):
-    sample_input_file = input_files_objects[0].get_input_file_path()
-    input_format = get_file_extension(sample_input_file)
-    converters = [class_selector(input_format, output_format) for output_format in output_formats]
-    converters = remove_duplicates(converters)
-    interim_files_objects = input_files_objects
-    for converter, expression in converters:
-        obj = converter(interim_files_objects)
-        interim_files_paths = obj.convert()
-        [interim_file_object.remove_input_file() for interim_file_object in interim_files_objects if interim_file_object]
-        interim_files_objects = []
-        for interim_file_path in interim_files_paths:
-            if interim_file_path:
-                interim_files_objects.append(FileManager(None, input_file_path = interim_file_path))
-            else:
-                interim_files_objects.append(None)
-    for i, interim_file_object in enumerate(interim_files_objects):
-        if interim_file_object:
-            output_file_name = os.path.basename(interim_file_object.get_input_file_path())
-            os.system('mv %s %s'%(interim_file_object.get_input_file_path(), OUTPUT_FOLDER))
-            input_files_objects[i].set_output_file_path(os.path.join(OUTPUT_FOLDER, output_file_name))
-            input_files_objects[i].converted = True
+def convert(input_files_objects, output_format):
+    pdf_files_objects = convert_to_pdf(input_files_objects)
+    output_files_objects = convert_files(input_files_objects, output_format)
+    set_flags_of_input_file_objects(input_files_objects, output_files_objects)
     return input_files_objects
 
+
+def convert_to_pdf(input_files_objects):
+    file_objects = convert_files(input_files_objects, 'pdf')
+    return file_objects
+
+
+def convert_files(input_files_objects, output_format):
+    input_format = get_input_format(input_files_objects)
+    converters_list = class_selector(input_format, output_format)
+    if not converters_list:
+        return input_files_objects
+    intermediate_files_objects = input_files_objects
+    for converter, expression in converters_list:
+        converter_object = converter(intermediate_files_objects)
+        intermediate_files_paths = converter_object.convert()
+        remove_input_files(intermediate_files_objects)
+        intermediate_files_objects = []
+        intermediate_files_objects = get_files_objects(intermediate_files_paths)
+    return intermediate_files_objects
+
+            
+def remove_input_files(intermediate_files_objects):
+    for intermediate_file_object in intermediate_files_objects:
+        if intermediate_file_object:
+            intermediate_file_object.remove_input_file()
