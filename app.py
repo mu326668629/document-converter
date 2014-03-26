@@ -134,7 +134,6 @@ def download():
 
 @app.route('/dummy_callback', methods = ['POST'])
 def dummy_callback():
-    print request.data
     return jsonify({'success': 'ok'})
 
 if __name__ == '__main__':
