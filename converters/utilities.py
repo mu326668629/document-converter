@@ -11,16 +11,15 @@ from html_txt import HtmlTxt
 from pdf_html import PdfHtml
 from txt_html import TxtHtml
 from doc_pdf import DocPdf
+from ppt_pdf import PptPdf
 
 from utils import get_file_extension
 
 from file_manager import FileManager
 
 
-AVAILABLE_FORMATS = ['pdf', 'html', 'txt', 'doc']
-
 AVAILABLE_CONVERTERS = [(HtmlPdf, 'htmlpdf'), (HtmlTxt, 'htmltxt'), (PdfHtml, 'pdfhtml'),
-                        (TxtHtml, 'txthtml'), (DocPdf, 'docpdf')]
+                        (TxtHtml, 'txthtml'), (DocPdf, 'docpdf'), (PptPdf, 'pptpdf')]
 
 
 def class_selector(input_format, output_format, result=None):

@@ -1,4 +1,6 @@
 import sys
+import os
+
 sys.path.append('..')
 
 
@@ -9,7 +11,6 @@ from general import GeneralConverter
 from file_manager import FileManager
 from file_manager import rename_filename_with_extension
 from config import UPLOAD_FOLDER
-import os
 
 class PptPdf(GeneralConverter):
     """
