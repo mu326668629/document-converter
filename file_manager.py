@@ -31,7 +31,7 @@ class FileManager(object):
         self.resource_path = resource_path
         self.bucket = kwargs.get('bucket', AWS_S3_BUCKET)
         self.bucket_key = Key(self.bucket)
-        
+
         self.input_file_path = input_file_path
         self.output_file_path = None
         self.remote_destination = None
@@ -39,7 +39,7 @@ class FileManager(object):
 
     def is_converted(self):
         return self.converted == True
-    
+
     def get_input_file_path(self):
         if not self.input_file_path:
             remote_path = get_signed_url(self.resource_path, self.bucket)

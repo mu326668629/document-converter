@@ -13,7 +13,7 @@ import os
 
 class DocPdf(GeneralConverter):
     """
-    This class is for Doc-Text conversion
+    This class is for Doc-Pdf conversion
     """
     def __init__(self, input_file_paths=[]):
         self.initial_format = 'doc'

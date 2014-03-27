@@ -1,9 +1,9 @@
 import os
-import re
+
 from utils import (get_uuid, timestamp_filename, allowed_filename,
     get_filename_from_url, download_url)
 from config import app
-from models import db, File, Conversion, Account, STATUS, PRIORITY
+from models import db, Conversion, Account, STATUS, PRIORITY
 from file_manager import get_signed_url, upload_to_remote
 from tasks import request_fetcher
 
@@ -102,7 +102,7 @@ def upload():
                 app.config['UPLOAD_FOLDER'], timestamp = True)
         else:
             return jsonify({'Error': 'File seems screwed'}), 400
-    
+
     # Upload to remote and remove file from local
     remote_destination = os.path.join(app.config['REMOTE_INPUT_FOLDER'],
         get_uuid(), filename)
@@ -115,7 +115,7 @@ def upload():
 
     # Call request fetcher
     request_fetcher.delay()
-    
+
     return jsonify({'status': STATUS.introduced, 'doc_ids': docIds})
 
 @app.route('/download', methods = ['POST'])

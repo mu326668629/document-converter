@@ -1,49 +1,94 @@
 import sys
+import re
+import os
+
 sys.path.append('..')
+
+from config import OUTPUT_FOLDER
 
 from html_pdf import HtmlPdf
 from html_txt import HtmlTxt
 from pdf_html import PdfHtml
 from txt_html import TxtHtml
-from doc_html import DocHtml
 from doc_pdf import DocPdf
-import re
+from ppt_pdf import PptPdf
 
+from utils import get_file_extension
 
-AVAILABLE_FORMATS = ['pdf', 'html', 'txt', 'doc']
+from file_manager import FileManager
+
 
 AVAILABLE_CONVERTERS = [(HtmlPdf, 'htmlpdf'), (HtmlTxt, 'htmltxt'), (PdfHtml, 'pdfhtml'),
-                        (TxtHtml, 'txthtml'), (DocHtml, 'dochtml'), (DocPdf, 'docpdf')]
+                        (TxtHtml, 'txthtml'), (DocPdf, 'docpdf'), (PptPdf, 'pptpdf')]
 
-FORMAT_RE = [re.compile('.*%s'%fmt) for fmt in AVAILABLE_FORMATS]
 
-def class_selector(input_format, output_format):
-    input_format_re = re.compile('%s.*'%input_format)
-    output_format_re =  re.compile('.*%s'%output_format)
-    result = [(converter, expression) for converter, expression in AVAILABLE_CONVERTERS
-              if input_format_re.match(expression) and output_format_re.match(expression)]
-    if not result:
-        result1 = [(converter, expression) for converter, expression in AVAILABLE_CONVERTERS
-                   if input_format_re.match(expression)]
-        result2 = [(converter, expression) for converter, expression in AVAILABLE_CONVERTERS
-                   if output_format_re.match(expression)]
-        for converter, expression in result1:
-            result.append((converter, expression))
-            input_format_c = expression[len(input_format):]
-            input_format_c_re = re.compile('%s.*'%input_format_c)
-            if not class_selector(input_format_c, output_format):
-                result = result[:-1]
-            else:
-                result.append(class_selector(input_format_c, output_format)[0])
-    return result
+def class_selector(input_format, output_format, result=None):
+    result = result or []
+    if input_format == output_format:
+        return result
+    direct_converter = get_direct_converter(input_format, output_format)
+    if direct_converter:
+        result.append(direct_converter)
+        return result
+    input_regex = make_regex(input_format)
+    input_matches = get_input_matches(input_regex)
+    for input_match in input_matches:
+        converter, converter_expression = input_match
+        intermediate_format = get_intermediate_format(converter_expression, input_format)
+        result.append(input_match)
+        converter_list = class_selector(intermediate_format, output_format, result)
+        if converter_list:
+            return converter_list
+        else:
+            result.pop()
 
-def remove_duplicates(converters_list):
-    product = []
-    for converter_list in converters_list:
-        for converter in converter_list:
-            if converter not in product:
-                product.append(converter)    
-    return product
+
+def get_intermediate_format(converter_expression, input_format):
+    return re.sub(input_format, '', converter_expression)
+        
+
+def get_input_matches(input_regex):
+    return [(converter, expression) for converter, expression in AVAILABLE_CONVERTERS
+            if input_regex.match(expression)]
+
+
+def make_regex(format_string):
+    return re.compile('^%s'%format_string)
+
+
+def get_direct_converter(input_format, output_format):
+    converter_expression = '%s%s'%(input_format, output_format)
+    for converter, expression in AVAILABLE_CONVERTERS:
+        if re.match(converter_expression, expression):
+            return (converter, expression)
+
+
+def get_input_format(input_files_objects):
+    sample_input_file = input_files_objects[0].get_input_file_path()
+    input_format = get_file_extension(sample_input_file)
+    return input_format
+
+
+def set_flags_of_input_file_objects(input_files_objects, output_files_objects):
+    for i, output_file_object in enumerate(output_files_objects):
+        if output_file_object:
+            output_file_name = os.path.basename(output_file_object.get_input_file_path())
+            os.system('mv %s %s'%(output_file_object.get_input_file_path(), OUTPUT_FOLDER))
+            input_files_objects[i].set_output_file_path(os.path.join(OUTPUT_FOLDER, output_file_name))
+            input_files_objects[i].converted = True
+    return input_files_objects
+
+
+def get_files_objects(files_paths):
+    files_objects = []
+    for file_path in files_paths:
+        if file_path:
+            file_object = FileManager(None, input_file_path=file_path)
+            files_objects.append(file_object)
+        else:
+            files_objects.append(None)
+    return files_objects
+
 
 def check_if_cjk(str):
     '''
