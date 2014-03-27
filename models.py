@@ -16,7 +16,7 @@ class STATUS:
 class PRIORITY:
     """
     We will accept priority in integer. This will let the client
-    have more priority flexibility. 
+    have more priority flexibility.
     NOTE: the lower the value, the higher the priority
     """
     high = 0
@@ -26,7 +26,7 @@ class PRIORITY:
     @classmethod
     def get_values(cls):
         return map(
-            lambda attr: getattr(cls, attr), 
+            lambda attr: getattr(cls, attr),
             get_attrs(cls)
         )
 
@@ -41,7 +41,7 @@ class Account(db.Model):
 
     def hash_password(self, password):
         self.password_hash = pwd_context.encrypt(password)
-        
+
     def verify_password(self, password):
         return pwd_context.verify(password, self.password_hash)
 
@@ -74,7 +74,7 @@ class File(db.Model):
     account_ref = db.Column(db.Integer, db.ForeignKey('account.id'))
     account_instance = db.relationship('Account',
         backref=db.backref('file', lazy='dynamic'))
-    
+
     def __init__(self, filename, location, account_instance, priority = PRIORITY.medium):
         self.filename = filename
         self.location = location
