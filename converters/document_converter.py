@@ -14,6 +14,11 @@ from config import mail
 def convert(input_files_objects, output_format):
     pdf_files_objects = convert_to_pdf(input_files_objects)
     output_files_objects = convert_files(pdf_files_objects, output_format)
+    if input_files_objects == input_files_objects:
+        print "Cannot be converted"
+        #TODO: MAIL TO ADMINS
+        for input_file_object in input_files_objects:
+            input_file_object.converted = False
     set_flags_of_file_objects(input_files_objects, output_files_objects)
     return input_files_objects
 
@@ -28,14 +33,7 @@ def convert_files(input_files_objects, output_format):
     input_format = get_input_format(input_files_objects)
     converters_list = class_selector(input_format, output_format)
     if not converters_list:
-        for input_file_object in input_files_objects:
-            input_file_object.converted = False
-        recipients = list(ADMINSTRATORS)
-        msg = Message("Conversion Failed for the %s format"%input_format,
-                      recipients=recipients)
-        mail.send(msg)
-        return
-
+        return input_files_objects
     intermediate_files_objects = input_files_objects
     for converter, expression in converters_list:
         converter_object = converter(intermediate_files_objects)
