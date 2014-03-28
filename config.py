@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask
+from flask_mail import Mail
 from flask_errormail import mail_on_500
 
 class ENVIRONMENT:
@@ -27,6 +28,7 @@ SECRET_KEY = '5ryNFKc13vaz8ABzMujbxFqvTerIqwNXrunGF14P'
 ALLOWED_EXTENSIONS = ['pdf', 'txt', 'html', 'doc', 'docx']
 
 app = Flask(__name__)
+mail = Mail(app)
 mail_on_500(app, ADMINSTRATORS)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['OUTPUT_FOLDER'] = OUTPUT_FOLDER

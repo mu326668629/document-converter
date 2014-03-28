@@ -1,4 +1,6 @@
 import sys
+import os
+
 sys.path.insert(0, '..')
 
 
@@ -6,14 +8,9 @@ CONVERTER_LOCATION = 'libreoffice --headless --convert-to pdf'
 
 
 from general import GeneralConverter
-from xhtml2pdf import pisa
-import html2text
-from file_manager import FileManager
 from utils import rename_filename_with_extension
-from bs4 import BeautifulSoup
 from config import UPLOAD_FOLDER
-import os
-import io
+
 
 class HtmlPdf(GeneralConverter):
     """

@@ -1,11 +1,12 @@
 import os
 import time
+import json
+
 from models import db, STATUS, PRIORITY, File, Conversion, Account
 from config import app
 from utils import Command
 from semisync import semisync
 import requests
-import json
 
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key

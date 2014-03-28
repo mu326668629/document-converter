@@ -12,8 +12,9 @@ import requests
 MIME_TO_EXTENSION = {
     'text/html': 'html',
     'application/pdf': 'pdf',
-    'text/plain': 'txt', 
+    'text/plain': 'txt',
     'application/msword': 'doc',
+    'application/vnd.oasis.opendocument.text': 'doc',
 }
 
 FILE_EXTENSIONS = ['pdf', 'txt', 'html', 'doc', 'docx', 'ppt', 'pptx', 'rtf', 'odt']
@@ -55,7 +56,7 @@ def download_url(url, destination_dir, target_filename = None, timestamp = True)
             if chunk:
                 f.write(chunk)
                 f.flush()
-                
+
     return target_filepath
 
 def get_extension_from_filename(filename):
