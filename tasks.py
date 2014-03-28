@@ -91,6 +91,7 @@ def document_converter(request_ids):
                 'doc_id': conversion.doc_id
                 }
             )
+    request_fetcher.delay()
 
 @app.task
 def post_handler(url, data):
