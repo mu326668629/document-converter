@@ -112,15 +112,8 @@ def remote_upload_handler(file_manager_obj, conversion_id):
     conversion_siblings = conversion.get_siblings()
     output = []
 
-    if check_conversions_status(conversion_siblings):
-        output = [get_dictionary_request(conversion) for conversion in conversion_siblings]
-        print output
-        post_handler.delay(callback, output)
-
-def check_conversions_status(conversion_instances):
-    for conversion_instance in conversion_instances:
-        if conversion_instance.status == 5 or conversion_instance.status == 4:
-            return True
+    output = [get_dictionary_request(conversion) for conversion in conversion_siblings]
+    post_handler.delay(callback, output)
 
 
 def get_dictionary_request(conversion):
