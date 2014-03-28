@@ -104,6 +104,7 @@ def remote_upload_handler(file_manager_obj, conversion_id):
     callback = conversion.file_instance.account_instance.callback
 
     file_manager_obj.set_remote_destination(conversion.get_remote_location())
+    file_manager_obj.upload_output_file()
     file_manager_obj.remove_output_file()
 
     conversion.status = STATUS.completed
