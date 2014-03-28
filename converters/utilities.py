@@ -18,8 +18,9 @@ from utils import get_file_extension
 from file_manager import FileManager
 
 
-AVAILABLE_CONVERTERS = [(HtmlPdf, 'htmlpdf'), (HtmlTxt, 'htmltxt'), (PdfHtml, 'pdfhtml'),
-                        (TxtHtml, 'txthtml'), (DocPdf, 'docpdf'), (PptPdf, 'pptpdf')]
+AVAILABLE_CONVERTERS = [(HtmlPdf, 'htmlpdf'), (HtmlTxt, 'htmltxt'),
+                        (PdfHtml, 'pdfhtml'), (TxtHtml, 'txthtml'),
+                        (DocPdf, 'docpdf'), (PptPdf, 'pptpdf')]
 
 
 def class_selector(input_format, output_format, result=None):
@@ -34,9 +35,11 @@ def class_selector(input_format, output_format, result=None):
     input_matches = get_input_matches(input_regex)
     for input_match in input_matches:
         converter, converter_expression = input_match
-        intermediate_format = get_intermediate_format(converter_expression, input_format)
+        intermediate_format = get_intermediate_format(converter_expression,
+                                                      input_format)
         result.append(input_match)
-        converter_list = class_selector(intermediate_format, output_format, result)
+        converter_list = class_selector(intermediate_format, output_format,
+                                        result)
         if converter_list:
             return converter_list
         else:
@@ -45,10 +48,11 @@ def class_selector(input_format, output_format, result=None):
 
 def get_intermediate_format(converter_expression, input_format):
     return re.sub(input_format, '', converter_expression)
-        
+
 
 def get_input_matches(input_regex):
-    return [(converter, expression) for converter, expression in AVAILABLE_CONVERTERS
+    return [(converter, expression)
+            for converter, expression in AVAILABLE_CONVERTERS
             if input_regex.match(expression)]
 
 
@@ -69,7 +73,7 @@ def get_input_format(input_files_objects):
     return input_format
 
 
-def set_flags_of_input_file_objects(input_files_objects, output_files_objects):
+def set_flags_of_file_objects(input_files_objects, output_files_objects):
     for i, output_file_object in enumerate(output_files_objects):
         if output_file_object:
             output_file_name = os.path.basename(output_file_object.get_input_file_path())

@@ -54,7 +54,7 @@ def document_converter(request_ids):
         conversion = Conversion.query.get(request_id)
         # Request callback
         callback = conversion.file_instance.account_instance.callback
-        
+
         # POST: informing QUEUED
         post_handler.delay(callback, {
             'status': TEXT_STATUS[conversion.status],
@@ -68,10 +68,10 @@ def document_converter(request_ids):
 
         if fm.is_converted():
             #print conversion, "The file was converted successfully"
-            
+
             conversion.status = STATUS.converted
             db.session.commit()
-            
+
             # Post status to callback
             post_handler.delay(callback, {
                 'status': TEXT_STATUS[conversion.status],
@@ -82,7 +82,7 @@ def document_converter(request_ids):
             remote_upload_handler.delay(fm, conversion.id)
         else:
             #print "Unable to convert file"
-            
+
             conversion.status = STATUS.failed
             db.session.commit()
 
@@ -104,9 +104,8 @@ def remote_upload_handler(file_manager_obj, conversion_id):
     callback = conversion.file_instance.account_instance.callback
 
     file_manager_obj.set_remote_destination(conversion.get_remote_location())
-    output_file_url = file_manager_obj.upload_output_file()
     file_manager_obj.remove_output_file()
-    
+
     conversion.status = STATUS.completed
     db.session.commit()
 
@@ -120,9 +119,9 @@ def remote_upload_handler(file_manager_obj, conversion_id):
 
 def check_conversions_status(conversion_instances):
     for conversion_instance in conversion_instances:
-        if conversion_instance.status == 5:
-            return False
-    return True
+        if conversion_instance.status == 5 or conversion_instance.status == 4:
+            return True
+
 
 def get_dictionary_request(conversion):
     return {
@@ -130,4 +129,3 @@ def get_dictionary_request(conversion):
         'signed_url': get_signed_url(conversion.get_remote_location()),
         'doc_id': conversion.doc_id,
     }
-        
