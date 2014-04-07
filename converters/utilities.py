@@ -74,7 +74,7 @@ def get_input_format(input_files_objects):
 
 
 def set_flags_of_file_objects(input_files_objects, output_files_objects):
-    for input_file_object, output_file_object in input_files_objects, output_files_objects:
+    for input_file_object, output_file_object in zip(input_files_objects, output_files_objects):
         if output_file_object == input_file_object:
             input_file_object.converted = False
         else:
