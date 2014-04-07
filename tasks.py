@@ -112,7 +112,7 @@ def remote_upload_handler(file_manager_obj, conversion_id):
 
     output = [get_dictionary_request(conversion_sib)
               for conversion_sib in conversion_siblings]
-    post_handler.delay(callback, output)
+
     post_handler.apply_async((callback, output), queue='post_handler')
 
 
