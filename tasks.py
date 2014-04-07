@@ -1,10 +1,8 @@
-import os
 import json
-from utils import rename_filename_with_extension, get_extension_from_filename
+import logging
 from file_manager import get_signed_url
 from celery import Celery
 import requests
-from time import sleep
 
 JSON_HEADERS = {
     'Content-type': 'application/json',
@@ -12,7 +10,7 @@ JSON_HEADERS = {
 }
 
 from models import db
-from models import Account, File, Conversion, STATUS
+from models import Conversion, STATUS
 
 from converters.document_converter import convert
 from file_manager import FileManager
@@ -23,11 +21,11 @@ BROKER_URL = 'redis://localhost:6379/0'
 app = Celery('tasks', broker=BROKER_URL)
 
 TEXT_STATUS = {
-    STATUS.introduced : 'introduced',
-    STATUS.queued : 'queued',
-    STATUS.converted : 'converting',
-    STATUS.completed : 'completed',
-    STATUS.failed : 'failed',
+    STATUS.introduced: 'introduced',
+    STATUS.queued: 'queued',
+    STATUS.converted: 'converting',
+    STATUS.completed: 'completed',
+    STATUS.failed: 'failed',
 }
 
 
@@ -47,6 +45,7 @@ def request_fetcher():
             conversion.status = STATUS.queued
             db.session.commit()
 
+
 @app.task
 def document_converter(request_ids):
     # Get all conversion requests.
@@ -55,48 +54,45 @@ def document_converter(request_ids):
         # Request callback
         callback = conversion.file_instance.account_instance.callback
 
-        # POST: informing QUEUED
-        post_handler.delay(callback, {
-            'status': TEXT_STATUS[conversion.status],
-            'doc_id': conversion.doc_id
-            }
-        )
-
         # Convert document.
         fm = FileManager(conversion.file_instance.location)
         convert([fm], conversion.output_format)
 
-        if fm.is_converted():
-            #print conversion, "The file was converted successfully"
+        # POST to callback for conversion queued
+        post_handler.apply_async((callback,
+                                  {
+                                      'status': TEXT_STATUS[conversion.status],
+                                      'doc_id': conversion.doc_id
+                                  }),
+                                 queue='post_handler')
 
+        if fm.is_converted():
             conversion.status = STATUS.converted
             db.session.commit()
 
-            # Post status to callback
-            post_handler.delay(callback, {
-                'status': TEXT_STATUS[conversion.status],
-                'doc_id': conversion.doc_id
-                }
-            )
-            # Spawn off upload
-            remote_upload_handler.delay(fm, conversion.id)
+            # Queue converted file for uploading
+            remote_upload_handler.apply_async((fm, conversion.id),
+                                              queue='post_handler')
         else:
-            #print "Unable to convert file"
-
+            logging.error('File not converted!')
             conversion.status = STATUS.failed
             db.session.commit()
 
-            post_handler.delay(callback, {
-                'status': TEXT_STATUS[conversion.status],
-                'doc_id': conversion.doc_id
-                }
-            )
+        # POST callback for status of conversion
+        post_handler.apply_async((callback,
+                                  {
+                                      'status': TEXT_STATUS[conversion.status],
+                                      'doc_id': conversion.doc_id
+                                  }),
+                                 queue='post_handler')
     request_fetcher.delay()
+
 
 @app.task
 def post_handler(url, data):
-    requests.post(url, data=json.dumps(data))# headers=JSON_HEADERS)
+    requests.post(url, data=json.dumps(data))
     request_fetcher.delay()
+
 
 @app.task
 def remote_upload_handler(file_manager_obj, conversion_id):
@@ -114,8 +110,10 @@ def remote_upload_handler(file_manager_obj, conversion_id):
     conversion_siblings = conversion.get_siblings()
     output = []
 
-    output = [get_dictionary_request(conversion) for conversion in conversion_siblings]
+    output = [get_dictionary_request(conversion_sib)
+              for conversion_sib in conversion_siblings]
     post_handler.delay(callback, output)
+    post_handler.apply_async((callback, output), queue='post_handler')
 
 
 def get_dictionary_request(conversion):
