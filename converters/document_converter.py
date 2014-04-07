@@ -20,8 +20,8 @@ def convert(input_files_objects, output_format):
         #TODO: MAIL TO ADMINS
         for input_file_object in input_files_objects:
             input_file_object.converted = False
-        return input_files_objects
-    set_flags_of_file_objects(input_files_objects, output_files_objects)
+    else:
+        set_flags_of_file_objects(input_files_objects, output_files_objects)
     return input_files_objects
 
 
