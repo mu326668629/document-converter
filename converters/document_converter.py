@@ -15,13 +15,7 @@ from config import mail
 def convert(input_files_objects, output_format):
     pdf_files_objects = convert_to_pdf(input_files_objects)
     output_files_objects = convert_files(pdf_files_objects, output_format)
-    if input_files_objects == input_files_objects:
-        print "Cannot be converted"
-        #TODO: MAIL TO ADMINS
-        for input_file_object in input_files_objects:
-            input_file_object.converted = False
-    else:
-        set_flags_of_file_objects(input_files_objects, output_files_objects)
+    set_flags_of_file_objects(input_files_objects, output_files_objects)
     return input_files_objects
 
 

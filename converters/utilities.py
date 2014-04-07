@@ -74,12 +74,17 @@ def get_input_format(input_files_objects):
 
 
 def set_flags_of_file_objects(input_files_objects, output_files_objects):
-    for i, output_file_object in enumerate(output_files_objects):
-        if output_file_object:
-            output_file_name = os.path.basename(output_file_object.get_input_file_path())
-            os.system('mv %s %s'%(output_file_object.get_input_file_path(), OUTPUT_FOLDER))
-            input_files_objects[i].set_output_file_path(os.path.join(OUTPUT_FOLDER, output_file_name))
-            input_files_objects[i].converted = True
+    for input_file_object, output_file_object in input_files_objects, output_files_objects:
+        if output_file_object == input_file_object:
+            input_file_object.converted = False
+        else:
+            output_file_name = os.path.basename(
+                output_file_object.get_input_file_path())
+            os.system('mv %s %s' % (
+                output_file_object.get_input_file_path(), OUTPUT_FOLDER))
+            input_file_object.set_output_file_path(
+                os.path.join(OUTPUT_FOLDER, output_file_name))
+            input_file_object.converted = True
     return input_files_objects
 
 
