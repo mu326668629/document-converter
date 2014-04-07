@@ -11,6 +11,7 @@ from utilities import get_files_objects
 from config import ADMINSTRATORS
 from config import mail
 
+
 def convert(input_files_objects, output_format):
     pdf_files_objects = convert_to_pdf(input_files_objects)
     output_files_objects = convert_files(pdf_files_objects, output_format)
@@ -19,9 +20,9 @@ def convert(input_files_objects, output_format):
         #TODO: MAIL TO ADMINS
         for input_file_object in input_files_objects:
             input_file_object.converted = False
-    set_flags_of_file_objects(input_files_objects, output_files_objects)
+    else:
+        set_flags_of_file_objects(input_files_objects, output_files_objects)
     return input_files_objects
-
 
 
 def convert_to_pdf(input_files_objects):
