@@ -77,14 +77,8 @@ def document_converter(request_ids):
             logging.error('File not converted!')
             conversion.status = STATUS.failed
             db.session.commit()
+            handle_conversion_completion(conversion, STATUS.failed)
 
-        # POST callback for status of conversion
-        post_handler.apply_async((callback,
-                                  {
-                                      'status': TEXT_STATUS[conversion.status],
-                                      'doc_id': conversion.doc_id
-                                  }),
-                                 queue='post_handler')
     request_fetcher.delay()
 
 
@@ -97,14 +91,16 @@ def post_handler(url, data):
 @app.task
 def remote_upload_handler(file_manager_obj, conversion_id):
     conversion = Conversion.query.get(conversion_id)
-    #print conversion
-    callback = conversion.file_instance.account_instance.callback
-
     file_manager_obj.set_remote_destination(conversion.get_remote_location())
     file_manager_obj.upload_output_file()
     file_manager_obj.remove_output_file()
 
-    conversion.status = STATUS.completed
+    handle_conversion_completion(conversion, STATUS.completed)
+
+
+def handle_conversion_completion(conversion, status=False):
+    callback = conversion.file_instance.account_instance.callback
+    conversion.status = status
     db.session.commit()
 
     conversion_siblings = conversion.get_siblings()
