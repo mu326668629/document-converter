@@ -98,7 +98,10 @@ def remote_upload_handler(file_manager_obj, conversion_id):
     handle_conversion_completion(conversion, STATUS.completed)
 
 
-def handle_conversion_completion(conversion, status=False):
+def handle_conversion_completion(conversion=None, status=None):
+    if not conversion or not status:
+        return None
+
     callback = conversion.file_instance.account_instance.callback
     conversion.status = status
     db.session.commit()
