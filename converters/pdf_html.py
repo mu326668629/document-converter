@@ -30,6 +30,7 @@ class PdfHtml(GeneralConverter):
                 os.system('mv %s %s'%(output_file_name, UPLOAD_FOLDER))
                 return os.path.join(UPLOAD_FOLDER, output_file_name)
             except IOError:
+                #TODO: Log the errors
                 return None
         else:
             return None
