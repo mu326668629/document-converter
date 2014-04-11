@@ -31,7 +31,7 @@ class HtmlPdf(GeneralConverter):
             output_file_name = rename_filename_with_extension(
                 os.path.basename(input_file_path), 'pdf')
             os.system('%s %s'%(CONVERTER_LOCATION, input_file_path))
-            output_file_name = os.path.join(tmp_dir, output_file_name)
+            output_file_name = os.path.join(TMP_DIR, output_file_name)
             return output_file_name
         else:
             return None
