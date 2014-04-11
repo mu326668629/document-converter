@@ -33,7 +33,8 @@ def convert_files(input_files_objects, output_format):
     for converter, expression in converters_list:
         converter_object = converter(intermediate_files_objects)
         intermediate_files_paths = converter_object.convert()
-        remove_input_files(intermediate_files_objects)
+        # Temporary fix, please remove this when logic is fexed.
+        # remove_input_files(intermediate_files_objects)
         intermediate_files_objects = []
         intermediate_files_objects = get_files_objects(intermediate_files_paths)
     return intermediate_files_objects
