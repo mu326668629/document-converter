@@ -1,5 +1,6 @@
 import os
 import io
+import logging
 
 from config import app
 from boto.s3.connection import S3Connection
@@ -51,7 +52,10 @@ class FileManager(object):
         return io.open(self.get_input_file_path(), encoding='utf-8').read()
 
     def remove_input_file(self):
-        os.remove(self.input_file_path)
+        try:
+            os.remove(self.input_file_path)
+        except Exception, e:
+            logging.debug('{}'.format(e.message))
 
     def get_output_file_path(self):
         return self.output_file_path
@@ -61,7 +65,10 @@ class FileManager(object):
         return self.output_file_path
 
     def remove_output_file(self):
-        os.remove(self.output_file_path)
+        try:
+            os.remove(self.output_file_path)
+        except Exception, e:
+            logging.debug('{}'.format(e.message))
 
     def set_remote_destination(self, remote_destination):
         self.remote_destination = remote_destination
