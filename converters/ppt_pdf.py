@@ -4,7 +4,7 @@ import os
 sys.path.append('..')
 
 
-CONVERTER_LOCATION = 'libreoffice --headless --convert-to pdf'
+CONVERTER_LOCATION = 'libreoffice --headless --nologo --norestore --nodefault --nofirststartwizard --nolockcheck --convert-to pdf'
 
 
 from general import GeneralConverter

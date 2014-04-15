@@ -6,7 +6,7 @@ sys.path.insert(0, '..')
 from config import UPLOAD_FOLDER
 PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 TMP_DIR = os.path.join(PARENT_DIR, UPLOAD_FOLDER)
-CONVERTER_LOCATION = 'libreoffice --headless --convert-to pdf --outdir {}'.format(TMP_DIR)
+CONVERTER_LOCATION = 'libreoffice --headless --nologo --norestore --nodefault --nofirststartwizard --nolockcheck --convert-to pdf --outdir {}'.format(TMP_DIR)
 
 
 from general import GeneralConverter
