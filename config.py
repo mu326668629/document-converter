@@ -4,6 +4,7 @@ from flask import Flask
 from flask_mail import Mail
 from flask_errormail import mail_on_500
 
+
 class ENVIRONMENT:
     development = 'development'
     production = 'production'
@@ -26,6 +27,10 @@ POSTGRES_DB_URI = os.environ.get('POSTGRES_DB_URI')
 SECRET_KEY = '5ryNFKc13vaz8ABzMujbxFqvTerIqwNXrunGF14P'
 
 ALLOWED_EXTENSIONS = ['pdf', 'txt', 'html', 'doc', 'docx']
+
+LIBRE_OFFICE_HOST = '127.0.0.1'
+LIBRE_OFFICE_PORT = '2220'
+
 
 app = Flask(__name__)
 mail = Mail(app)

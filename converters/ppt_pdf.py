@@ -3,14 +3,18 @@ import os
 
 sys.path.append('..')
 
-
-CONVERTER_LOCATION = 'libreoffice --headless --nologo --norestore --nodefault --nofirststartwizard --nolockcheck --convert-to pdf'
+from config import UPLOAD_FOLDER, LIBRE_OFFICE_HOST, LIBRE_OFFICE_PORT
+PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+TMP_DIR = os.path.join(PARENT_DIR, UPLOAD_FOLDER)
+CONVERTER_LOCATION = '''unoconv --connection 'socket,host={libre_office_host},\
+port={libre_office_port},tcpNoDelay=1;urp;StarOffice.ComponentContext' -f pdf\
+ -o {output_file_path} {input_file_path}'''
 
 
 from general import GeneralConverter
-from file_manager import FileManager
 from file_manager import rename_filename_with_extension
 from config import UPLOAD_FOLDER
+
 
 class PptPdf(GeneralConverter):
     """
@@ -26,10 +30,16 @@ class PptPdf(GeneralConverter):
             input_file_path = input_file_object.get_input_file_path()
             output_file_name = rename_filename_with_extension(
                 os.path.basename(input_file_path), 'pdf')
-            os.system('%s %s'%(CONVERTER_LOCATION, input_file_path))
+            output_file_path = os.path.join(TMP_DIR, output_file_name)
+            converter = CONVERTER_LOCATION.format(
+                libre_office_host=LIBRE_OFFICE_HOST,
+                libre_office_port=LIBRE_OFFICE_PORT,
+                output_file_path=output_file_path,
+                input_file_path=input_file_path)
+            os.system('%s' % (converter, ))
             try:
                 open(output_file_name)
-                os.system('mv %s %s'%(output_file_name, UPLOAD_FOLDER))
+                os.system('mv %s %s' % (output_file_name, UPLOAD_FOLDER))
                 return os.path.join(UPLOAD_FOLDER, output_file_name)
             except IOError:
                 print "Conversion Unsuccessfull for ppt_pdf"
