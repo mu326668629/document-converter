@@ -33,7 +33,7 @@ class HtmlPdf(GeneralConverter):
                 os.path.basename(input_file_path), 'pdf')
             output_file_path = os.path.join(TMP_DIR, output_file_name)
             converter = CONVERTER_LOCATION.format(
-                libre_pffice_host=LIBRE_OFFICE_HOST,
+                libre_office_host=LIBRE_OFFICE_HOST,
                 libre_office_port=LIBRE_OFFICE_PORT,
                 input_file_path=input_file_path,
                 output_file_path=output_file_path)
