@@ -1,4 +1,4 @@
 document-converter
 ==================
 
-You can convert various file formats back and forth. Supported formats are PDF, HTML etc.
+You can convert various file formats back and forth. Supported formats are PDF, HTML, DOC, PPT and TXT
