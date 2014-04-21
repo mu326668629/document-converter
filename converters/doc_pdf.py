@@ -1,13 +1,14 @@
 import os
 import sys
+import subprocess
 import logging as log
 sys.path.append('..')
 
 from config import UPLOAD_FOLDER, LIBRE_OFFICE_HOST, LIBRE_OFFICE_PORT
 PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 TMP_DIR = os.path.join(PARENT_DIR, UPLOAD_FOLDER)
-CONVERTER_LOCATION = '''unoconv --connection 'socket,host={libre_office_host},\
-port={libre_office_port},tcpNoDelay=1;urp;StarOffice.ComponentContext' -f pdf\
+CONVERTER_LOCATION = '''unoconv --connection socket,host={libre_office_host},\
+port={libre_office_port},tcpNoDelay=1;urp;StarOffice.ComponentContext -f pdf\
  -o {output_file_path} {input_file_path}'''
 
 
@@ -36,7 +37,8 @@ class DocPdf(GeneralConverter):
                 libre_office_port=LIBRE_OFFICE_PORT,
                 output_file_path=output_file_path,
                 input_file_path=input_file_path)
-            os.system('%s' % (converter))
+
+            subprocess.call(converter.split())
             if os.path.isfile(output_file_path):
                 return output_file_path
             else:
