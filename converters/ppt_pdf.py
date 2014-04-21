@@ -1,5 +1,6 @@
 import sys
 import os
+import logging as log
 
 sys.path.append('..')
 
@@ -37,12 +38,9 @@ class PptPdf(GeneralConverter):
                 output_file_path=output_file_path,
                 input_file_path=input_file_path)
             os.system('%s' % (converter, ))
-            try:
-                open(output_file_name)
-                os.system('mv %s %s' % (output_file_name, UPLOAD_FOLDER))
-                return os.path.join(UPLOAD_FOLDER, output_file_name)
-            except IOError:
-                print "Conversion Unsuccessfull for ppt_pdf"
-                return None
-        else:
-            return None
+            if os.path.isfile(output_file_path):
+                return output_file_path
+            else:
+                log.error('Conversion from PPT => PDF failed for {}'.format(
+                    input_file_path))
+        return None

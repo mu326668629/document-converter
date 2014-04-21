@@ -1,5 +1,6 @@
 import sys
 import os
+import logging as log
 
 sys.path.insert(0, '..')
 
@@ -26,11 +27,10 @@ class HtmlPdf(GeneralConverter):
 
     def _single_convert(self, input_file_object):
         if input_file_object:
-            input_file_path = os.path.join(
-                PARENT_DIR,
-                input_file_object.get_input_file_path())
+            input_file_path = input_file_object.get_input_file_path()
             output_file_name = rename_filename_with_extension(
                 os.path.basename(input_file_path), 'pdf')
+
             output_file_path = os.path.join(TMP_DIR, output_file_name)
             converter = CONVERTER_LOCATION.format(
                 libre_office_host=LIBRE_OFFICE_HOST,
@@ -38,7 +38,9 @@ class HtmlPdf(GeneralConverter):
                 input_file_path=input_file_path,
                 output_file_path=output_file_path)
             os.system('%s' % (converter, ))
-            output_file_name = os.path.join(TMP_DIR, output_file_name)
-            return output_file_name
-        else:
-            return None
+            if os.path.isfile(output_file_path):
+                return output_file_path
+            else:
+                log.error('Conversion from HTML => PDF failed for {}'.format(
+                    input_file_path))
+        return None
