@@ -1,5 +1,6 @@
 import os
 import sys
+import logging as log
 sys.path.append('..')
 
 from config import UPLOAD_FOLDER, LIBRE_OFFICE_HOST, LIBRE_OFFICE_PORT
@@ -12,8 +13,6 @@ port={libre_office_port},tcpNoDelay=1;urp;StarOffice.ComponentContext' -f pdf\
 
 from general import GeneralConverter
 from file_manager import rename_filename_with_extension
-from config import UPLOAD_FOLDER
-import os
 
 
 class DocPdf(GeneralConverter):
@@ -38,12 +37,9 @@ class DocPdf(GeneralConverter):
                 output_file_path=output_file_path,
                 input_file_path=input_file_path)
             os.system('%s' % (converter))
-            try:
-                open(output_file_name)
-                os.system('mv %s %s' % (output_file_name, UPLOAD_FOLDER))
-                return os.path.join(UPLOAD_FOLDER, output_file_name)
-            except IOError:
-                print "Conversion Unsuccessfull for doc_pdf"
-                return None
-        else:
-            return None
+            if os.path.isfile(output_file_path):
+                return output_file_path
+            else:
+                log.error('Conversion failed from DOC => PDF for {}'.format(
+                    input_file_path))
+        return None
