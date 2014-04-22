@@ -97,18 +97,3 @@ def get_files_objects(files_paths):
         else:
             files_objects.append(None)
     return files_objects
-
-
-def check_if_cjk(str):
-    '''
-    rudimentary CJK detection
-    seems like a lot of it is between these two ranges.
-    cf. http://www.alanwood.net/unicode/fontsbyrange.html
-    '''
-    ranges = [(12272, 12287), (19968, 40959)]
-    for i in str:
-        j = ord(i)
-        for (low, high) in ranges:
-            if j > low and j < high:
-                return True
-    return False
