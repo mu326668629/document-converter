@@ -8,8 +8,6 @@ from utilities import class_selector
 from utilities import get_input_format
 from utilities import set_flags_of_file_objects
 from utilities import get_files_objects
-from config import ADMINSTRATORS
-from config import mail
 
 
 def convert(input_files_objects, output_format):
