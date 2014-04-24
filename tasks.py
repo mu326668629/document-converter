@@ -1,3 +1,4 @@
+import os
 import json
 import logging
 from file_manager import get_signed_url
@@ -17,7 +18,7 @@ from file_manager import FileManager
 
 db.create_scoped_session()
 
-BROKER_URL = 'redis://localhost:6379/0'
+BROKER_URL = os.environ.get('BROKER_URL')
 app = Celery('tasks', broker=BROKER_URL)
 
 TEXT_STATUS = {
