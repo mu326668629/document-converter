@@ -23,8 +23,9 @@ S3_BUCKET = os.environ.get('S3_BUCKET')
 REMOTE_INPUT_FOLDER = 'input'
 REMOTE_DUMP_FOLDER = 'output'
 POSTGRES_DB_URI = os.environ.get('POSTGRES_DB_URI')
+HEARTBEAT_URL = os.environ.get('HEARTBEAT_URL', 'heartbeat')
 
-SECRET_KEY = '5ryNFKc13vaz8ABzMujbxFqvTerIqwNXrunGF14P'
+SECRET_KEY = os.environ.get('FLASK_SECRET_KEY')
 
 ALLOWED_EXTENSIONS = ['pdf', 'txt', 'html', 'doc', 'docx']
 

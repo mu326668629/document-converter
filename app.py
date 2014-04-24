@@ -2,7 +2,7 @@ import os
 
 from utils import (get_uuid, timestamp_filename, allowed_filename,
     get_filename_from_url, download_url)
-from config import app
+from config import app, HEARTBEAT_URL
 from models import db, Conversion, Account, STATUS, PRIORITY
 from file_manager import get_signed_url, upload_to_remote
 from tasks import request_fetcher
@@ -20,6 +20,11 @@ TEXT_STATUS = {
     STATUS.completed : 'completed',
     STATUS.failed : 'failed',
 }
+
+
+@app.route('/{}'.format(HEARTBEAT_URL))
+def heartbeat():
+    return 'HTTP OK'
 
 
 @auth.verify_password
