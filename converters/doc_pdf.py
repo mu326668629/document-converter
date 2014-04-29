@@ -31,7 +31,7 @@ class DocPdf(GeneralConverter):
             output_file_name = rename_filename_with_extension(
                 os.path.basename(input_file_path), 'pdf')
 
-            output_file_path = os.path.join(TMP_DIR, output_file_name)
+            output_file_path = TMP_DIR
             converter = CONVERTER_LOCATION.format(
                 libre_office_host=LIBRE_OFFICE_HOST,
                 libre_office_port=LIBRE_OFFICE_PORT,
@@ -39,8 +39,9 @@ class DocPdf(GeneralConverter):
                 input_file_path=input_file_path)
 
             subprocess.call(converter.split())
-            if os.path.isfile(output_file_path):
-                return output_file_path
+            output_file = os.path.join(output_file_path, output_file_name)
+            if os.path.isfile(output_file):
+                return output_file
             else:
                 log.error('Conversion failed from DOC => PDF for {}'.format(
                     input_file_path))
