@@ -8,9 +8,8 @@ sys.path.insert(0, '..')
 from config import UPLOAD_FOLDER, LIBRE_OFFICE_HOST, LIBRE_OFFICE_PORT
 PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 TMP_DIR = os.path.join(PARENT_DIR, UPLOAD_FOLDER)
-CONVERTER_LOCATION = '''unoconv --connection socket,host={libre_office_host},\
-port={libre_office_port},tcpNoDelay=1;urp;StarOffice.ComponentContext -f pdf\
- -o {output_file_path} {input_file_path}'''
+CONVERTER_LOCATION = '''xvfb-run --server-args="-screen 0, 1024x768x24"\
+ /usr/bin/wkhtmltopdf {input_file_path} {output_file_path}'''
 
 
 from general import GeneralConverter
@@ -34,8 +33,6 @@ class HtmlPdf(GeneralConverter):
 
             output_file_path = TMP_DIR
             converter = CONVERTER_LOCATION.format(
-                libre_office_host=LIBRE_OFFICE_HOST,
-                libre_office_port=LIBRE_OFFICE_PORT,
                 input_file_path=input_file_path,
                 output_file_path=output_file_path)
 
