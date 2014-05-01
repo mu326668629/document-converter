@@ -8,7 +8,7 @@ sys.path.insert(0, '..')
 from config import UPLOAD_FOLDER, LIBRE_OFFICE_HOST, LIBRE_OFFICE_PORT
 PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 TMP_DIR = os.path.join(PARENT_DIR, UPLOAD_FOLDER)
-CONVERTER_LOCATION = '''xvfb-run --server-args="-screen 0, 1024x768x24"\
+CONVERTER_LOCATION = '''xvfb-run -e /dev/stdout\
  /usr/bin/wkhtmltopdf {input_file_path} {output_file_path}'''
 
 
@@ -31,15 +31,14 @@ class HtmlPdf(GeneralConverter):
             output_file_name = rename_filename_with_extension(
                 os.path.basename(input_file_path), 'pdf')
 
-            output_file_path = TMP_DIR
+            output_file_path = os.path.join(TMP_DIR, output_file_name)
             converter = CONVERTER_LOCATION.format(
                 input_file_path=input_file_path,
                 output_file_path=output_file_path)
 
             subprocess.call(converter.split())
-            output_file = os.path.join(output_file_path, output_file_name)
-            if os.path.isfile(output_file):
-                return output_file
+            if os.path.isfile(output_file_path):
+                return output_file_path
             else:
                 log.error('Conversion from HTML => PDF failed for {}'.format(
                     input_file_path))
