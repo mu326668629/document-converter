@@ -8,7 +8,7 @@ sys.path.insert(0, '..')
 from config import UPLOAD_FOLDER, LIBRE_OFFICE_HOST, LIBRE_OFFICE_PORT
 PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 TMP_DIR = os.path.join(PARENT_DIR, UPLOAD_FOLDER)
-CONVERTER_LOCATION = '''xvfb-run -e /dev/stdout\
+CONVERTER_LOCATION = '''xvfb-run\
  /usr/bin/wkhtmltopdf {input_file_path} {output_file_path}'''
 
 
