@@ -107,7 +107,7 @@ def get_files_objects(files_paths):
 def handle_failed_conversion(input_file):
     failed_conversion_dir = os.path.join(TMP_DIR, 'failed_conversions')
     if not os.path.isdir(failed_conversion_dir):
-        os.path.makedirs(failed_conversion_dir)
+        os.makedirs(failed_conversion_dir)
     filename = os.path.basename(input_file)
     try:
         shutil.copyfile(input_file, os.path.join(failed_conversion_dir,
