@@ -7,7 +7,7 @@ sys.path.append('..')
 from config import UPLOAD_FOLDER, LIBRE_OFFICE_HOST, LIBRE_OFFICE_PORT
 PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 TMP_DIR = os.path.join(PARENT_DIR, UPLOAD_FOLDER)
-CONVERTER_LOCATION = '''nice libreoffice --headless --convert-to pdf:writer_pdf_Export --outdir
+CONVERTER_LOCATION = '''nice libreoffice --headless --convert-to pdf:writer_pdf_Export --outdir\
  {output_file_path} {input_file_path}'''
 
 
