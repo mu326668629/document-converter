@@ -12,6 +12,8 @@ from utilities import get_files_objects
 
 def convert(input_files_objects, output_format):
     pdf_files_objects = convert_to_pdf(input_files_objects)
+    if None in pdf_files_objects:
+        return None
     output_files_objects = convert_files(pdf_files_objects, output_format)
     set_flags_of_file_objects(input_files_objects, output_files_objects)
     return input_files_objects
