@@ -1,15 +1,16 @@
 import sys
+import os
 sys.path.append('..')
 
 from general import GeneralConverter
 import html2text
-from file_manager import FileManager
 from bs4 import BeautifulSoup
 from utils import rename_filename_with_extension
-from config import UPLOAD_FOLDER
 from file_manager import write_stream
-import re
-import os
+
+from config import UPLOAD_FOLDER
+PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+TMP_DIR = os.path.join(PARENT_DIR, UPLOAD_FOLDER)
 
 class HtmlTxt(GeneralConverter):
     """
@@ -44,7 +45,8 @@ class HtmlTxt(GeneralConverter):
             output_file_name = rename_filename_with_extension(
                 os.path.basename(input_file_object.get_input_file_path()),
                 self.final_format)
-            output_file = write_stream(output_file_name, output_stream)
+            output_file = write_stream(os.path.join(TMP_DIR, output_file_name),
+                                       output_stream)
             try:
                 open(output_file)
                 os.system('mv %s %s'%(output_file_name, UPLOAD_FOLDER))
