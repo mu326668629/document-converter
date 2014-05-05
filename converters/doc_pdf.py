@@ -13,7 +13,6 @@ CONVERTER_LOCATION = '''nice libreoffice --headless --convert-to\
 
 from general import GeneralConverter
 from file_manager import rename_filename_with_extension
-from converters.utilities import handle_failed_conversion
 
 
 class DocPdf(GeneralConverter):
@@ -41,6 +40,7 @@ class DocPdf(GeneralConverter):
             if os.path.isfile(output_file):
                 return output_file
             else:
+                from .utilities import handle_failed_conversion
                 handle_failed_conversion(input_file_path)
                 log.error('Conversion failed from DOC => PDF for {}'.format(
                     input_file_path))
