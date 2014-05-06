@@ -28,7 +28,7 @@ def convert_files(input_files_objects, output_format):
     converters_list = class_selector(input_format, output_format)
     if not converters_list:
         log.error('Failed to find converter list for {} => {}'.format(
-            input_format. output_format))
+            input_format, output_format))
         return input_files_objects
     log.info('Found converter for {} => {} - {}'.format(
         input_format, output_format, converters_list))
