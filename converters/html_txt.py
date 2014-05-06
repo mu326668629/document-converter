@@ -1,9 +1,11 @@
 import sys
 import os
+import html2text
+
 sys.path.append('..')
 
+from logger import log
 from general import GeneralConverter
-import html2text
 from bs4 import BeautifulSoup
 from utils import rename_filename_with_extension
 from file_manager import write_stream
@@ -52,8 +54,11 @@ class HtmlTxt(GeneralConverter):
                 os.system('mv %s %s'%(output_file_name, UPLOAD_FOLDER))
                 return os.path.join(UPLOAD_FOLDER, output_file_name)
             except e:
-                print e
-                print "Conversion Unsuccessfull for html_txt because of open(output_file)"
+                from .utilities import handle_failed_conversion
+                input_file_path = input_file_object.get_input_file_path()
+                handle_failed_conversion(input_file_path)
+                log.error('Conversion failed from HTML => TXT for {}'.format(
+                    input_file_path))
                 return None
         else:
             return None

@@ -32,6 +32,8 @@ ALLOWED_EXTENSIONS = ['pdf', 'txt', 'html', 'doc', 'docx']
 LIBRE_OFFICE_HOST = '127.0.0.1'
 LIBRE_OFFICE_PORT = '2220'
 
+LOGENTRIES_KEY = os.environ.get('LOGENTRIES_KEY', '')
+
 
 app = Flask(__name__)
 mail = Mail(app)

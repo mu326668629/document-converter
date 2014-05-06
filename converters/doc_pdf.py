@@ -43,5 +43,5 @@ class DocPdf(GeneralConverter):
                 from .utilities import handle_failed_conversion
                 handle_failed_conversion(input_file_path)
                 log.error('Conversion failed from DOC => PDF for {}'.format(
-                    input_file_path))
+                    converter))
         return None

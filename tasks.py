@@ -16,6 +16,8 @@ from models import Conversion, STATUS
 from converters.document_converter import convert
 from file_manager import FileManager
 
+from logger import log
+
 db.create_scoped_session()
 
 BROKER_URL = os.environ.get('BROKER_URL')
@@ -75,7 +77,8 @@ def document_converter(request_ids):
             remote_upload_handler.apply_async((fm, conversion.id),
                                               queue='post_handler')
         else:
-            logging.error('File not converted!')
+            log.error('File not converted! conversion_id={}'.format(
+                conversion.id))
             conversion.status = STATUS.failed
             db.session.commit()
             handle_conversion_completion(conversion, STATUS.failed)

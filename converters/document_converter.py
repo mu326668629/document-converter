@@ -2,8 +2,7 @@ import sys
 
 sys.path.append('..')
 
-from flask_mail import Message
-
+from logger import log
 from utilities import class_selector
 from utilities import get_input_format
 from utilities import set_flags_of_file_objects
@@ -28,6 +27,8 @@ def convert_files(input_files_objects, output_format):
     input_format = get_input_format(input_files_objects)
     converters_list = class_selector(input_format, output_format)
     if not converters_list:
+        log.error('Failed to find converter list for {} => {}'.format(
+            input_format. output_format))
         return input_files_objects
     intermediate_files_objects = input_files_objects
     for converter, expression in converters_list:
