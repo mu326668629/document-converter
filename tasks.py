@@ -70,8 +70,9 @@ def document_converter(request_ids):
                                  queue='post_handler')
 
         if fm.is_converted():
-            log.info('File converted conversion_id={}, doc_id={}'.format(
-                conversion.id, conversion.doc_id))
+            log.info('File converted conversion_id={}, doc_id={}, file={} to {}'.format(
+                conversion.id, conversion.doc_id,
+                conversion.file_instance.location, conversion.output_format))
             conversion.status = STATUS.converted
             db.session.commit()
 
