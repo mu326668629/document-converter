@@ -1,10 +1,14 @@
 import sys
 import re
 import os
+import shutil
+import logging as log
 
 sys.path.append('..')
 
-from config import OUTPUT_FOLDER
+from config import OUTPUT_FOLDER, UPLOAD_FOLDER
+PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+TMP_DIR = os.path.join(PARENT_DIR, UPLOAD_FOLDER)
 
 from html_pdf import HtmlPdf
 from html_txt import HtmlTxt
@@ -74,7 +78,8 @@ def get_input_format(input_files_objects):
 
 
 def set_flags_of_file_objects(input_files_objects, output_files_objects):
-    for input_file_object, output_file_object in zip(input_files_objects, output_files_objects):
+    for input_file_object, output_file_object in zip(input_files_objects,
+                                                     output_files_objects):
         if (not output_file_object) or output_file_object == input_file_object:
             input_file_object.converted = False
         else:
@@ -97,3 +102,15 @@ def get_files_objects(files_paths):
         else:
             files_objects.append(None)
     return files_objects
+
+
+def handle_failed_conversion(input_file):
+    failed_conversion_dir = os.path.join(TMP_DIR, 'failed_conversions')
+    if not os.path.isdir(failed_conversion_dir):
+        os.makedirs(failed_conversion_dir)
+    filename = os.path.basename(input_file)
+    try:
+        shutil.copyfile(input_file, os.path.join(failed_conversion_dir,
+                                                 filename))
+    except IOError, ie:
+        log.error(ie)

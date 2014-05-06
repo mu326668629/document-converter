@@ -4,12 +4,11 @@ import subprocess
 import logging as log
 sys.path.append('..')
 
-from config import UPLOAD_FOLDER, LIBRE_OFFICE_HOST, LIBRE_OFFICE_PORT
+from config import UPLOAD_FOLDER
 PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 TMP_DIR = os.path.join(PARENT_DIR, UPLOAD_FOLDER)
-CONVERTER_LOCATION = '''unoconv --connection socket,host={libre_office_host},\
-port={libre_office_port},tcpNoDelay=1;urp;StarOffice.ComponentContext -f pdf\
- -o {output_file_path} {input_file_path}'''
+CONVERTER_LOCATION = '''nice libreoffice --headless --convert-to\
+ pdf:writer_pdf_Export --outdir {output_file_path} {input_file_path}'''
 
 
 from general import GeneralConverter
@@ -33,8 +32,6 @@ class DocPdf(GeneralConverter):
 
             output_file_path = TMP_DIR
             converter = CONVERTER_LOCATION.format(
-                libre_office_host=LIBRE_OFFICE_HOST,
-                libre_office_port=LIBRE_OFFICE_PORT,
                 output_file_path=output_file_path,
                 input_file_path=input_file_path)
 
@@ -43,6 +40,8 @@ class DocPdf(GeneralConverter):
             if os.path.isfile(output_file):
                 return output_file
             else:
+                from .utilities import handle_failed_conversion
+                handle_failed_conversion(input_file_path)
                 log.error('Conversion failed from DOC => PDF for {}'.format(
                     input_file_path))
         return None
