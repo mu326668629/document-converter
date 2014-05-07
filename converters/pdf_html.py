@@ -3,7 +3,7 @@ sys.path.append('..')
 
 from logger import log
 from general import GeneralConverter
-from file_manager import rename_filename_with_extension
+from utils import rename_filename_with_extension
 from config import UPLOAD_FOLDER
 import os
 
