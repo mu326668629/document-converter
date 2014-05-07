@@ -12,7 +12,7 @@ CONVERTER_LOCATION = '''nice libreoffice --headless --convert-to\
 
 
 from general import GeneralConverter
-from file_manager import rename_filename_with_extension
+from utils import rename_filename_with_extension
 
 
 class DocPdf(GeneralConverter):

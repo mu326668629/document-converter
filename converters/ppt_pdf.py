@@ -14,7 +14,7 @@ port={libre_office_port},tcpNoDelay=1;urp;StarOffice.ComponentContext -f pdf\
 
 
 from general import GeneralConverter
-from file_manager import rename_filename_with_extension
+from utils import rename_filename_with_extension
 from config import UPLOAD_FOLDER
 
 
