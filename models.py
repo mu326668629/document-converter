@@ -65,7 +65,7 @@ class Account(db.Model):
             log.error('Signature expired! data={}'.format(token))
             return None  # valid token, but expired
         except BadSignature:
-            log.error('Bad signature! data={}'.format(toekn))
+            log.error('Bad signature! data={}'.format(token))
             return None  # invalid token
         user = Account.query.get(data['id'])
         return user
