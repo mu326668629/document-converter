@@ -10,8 +10,8 @@ class ENVIRONMENT:
     production = 'production'
 
 ADMINSTRATORS = (
-    'vedarth@aplopio.com',
-    'ravi@aplopio.com')
+    ('Vedarth Kulkarni', 'vedarth@aplopio.com'),
+    ('Ravi Shanker', 'ravi@aplopio.com'))
 
 DEBUG = False
 ENV = os.environ.get('APP_ENVIRONMENT', ENVIRONMENT.development)
