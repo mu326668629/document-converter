@@ -9,9 +9,9 @@ class ENVIRONMENT:
     development = 'development'
     production = 'production'
 
-ADMINSTRATORS = (
-    ('Vedarth Kulkarni', 'vedarth@aplopio.com'),
-    ('Ravi Shanker', 'ravi@aplopio.com'))
+ADMINS = [
+    'vedarth@aplopio.com',
+    'ravi@aplopio.com']
 
 DEBUG = False
 ENV = os.environ.get('APP_ENVIRONMENT', ENVIRONMENT.development)
@@ -36,8 +36,6 @@ LOGENTRIES_KEY = os.environ.get('LOGENTRIES_KEY', '')
 
 
 app = Flask(__name__)
-mail = Mail(app)
-mail_on_500(app, ADMINSTRATORS)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['OUTPUT_FOLDER'] = OUTPUT_FOLDER
 app.config.from_object(__name__)
