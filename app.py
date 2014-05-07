@@ -157,11 +157,20 @@ def handle_internal_error(exception):
     msg = Message(
         '[Flask|ErrorMail] Exception Detected: {}'.format(exception.message),
         sender='noreply@localhost', recipients=recipients)
+
     msg_contents = [
         'Traceback:',
         '-'*80,
         traceback.format_exc(),
+        '\n\n',
+        'Request Information :',
+        '-'*80,
     ]
+
+    environ_keys = sorted(request.environ.keys())
+    for key in environ_keys:
+        msg_contents.append('{}: {}'.format(key, request.environ.get(key)))
+
     msg.body = '\n'.join(msg_contents) + '\n'
     mail.send(msg)
     return '', 500
