@@ -16,6 +16,8 @@ from models import Conversion, STATUS
 from converters.document_converter import convert
 from file_manager import FileManager
 
+from logger import log
+
 db.create_scoped_session()
 
 BROKER_URL = os.environ.get('BROKER_URL')
@@ -68,6 +70,9 @@ def document_converter(request_ids):
                                  queue='post_handler')
 
         if fm.is_converted():
+            log.info('File converted conversion_to {} id={}, doc_id={}, file={}, status=success'.format(
+                conversion.output_format, conversion.id, conversion.doc_id,
+                conversion.file_instance.location))
             conversion.status = STATUS.converted
             db.session.commit()
 
@@ -75,7 +80,9 @@ def document_converter(request_ids):
             remote_upload_handler.apply_async((fm, conversion.id),
                                               queue='post_handler')
         else:
-            logging.error('File not converted!')
+            log.error('File not converted to {}! file={}, status=failed, conversion_id={}'.format(
+                conversion.output_format, conversion.file_instance.location,
+                conversion.id))
             conversion.status = STATUS.failed
             db.session.commit()
             handle_conversion_completion(conversion, STATUS.failed)
@@ -85,7 +92,11 @@ def document_converter(request_ids):
 
 @app.task
 def post_handler(url, data):
-    requests.post(url, data=json.dumps(data))
+    response = requests.post(url, data=json.dumps(data))
+    for d in data:
+        log.debug('Postback status {} for doc_id={}, signed_url={}'.format(
+            response.status_code,
+            d.get('doc_id', ''), d.get('signed_url', '')))
     request_fetcher.delay()
 
 
@@ -94,8 +105,11 @@ def remote_upload_handler(file_manager_obj, conversion_id):
     conversion = Conversion.query.get(conversion_id)
     file_manager_obj.set_remote_destination(conversion.get_remote_location())
     file_manager_obj.upload_output_file()
+    log.info('Uploading file={}, conversion_id={}'.format(
+        conversion.file_instance.location, conversion.id))
     file_manager_obj.remove_output_file()
-
+    log.info('Sending postback for file={}, conversion_id={}'.format(
+        conversion.file_instance.location, conversion.id))
     handle_conversion_completion(conversion, STATUS.completed)
 
 

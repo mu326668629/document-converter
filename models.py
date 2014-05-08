@@ -6,12 +6,16 @@ from config import app
 from flask.ext.sqlalchemy import SQLAlchemy
 db = SQLAlchemy(app)
 
+from logger import log
+
+
 class STATUS:
     introduced = 1
     queued = 2
     converted = 3
     completed = 4
     failed = 5
+
 
 class PRIORITY:
     """
@@ -31,11 +35,14 @@ class PRIORITY:
         )
 
 from passlib.apps import custom_app_context as pwd_context
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired
+from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer,
+                          BadSignature, SignatureExpired)
+
 
 class Account(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
-    username = db.Column(db.String(32), index = True, unique = True)
+
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(32), index=True, unique=True)
     password_hash = db.Column(db.String(256))
     callback = db.Column(db.Text)
 
@@ -45,9 +52,9 @@ class Account(db.Model):
     def verify_password(self, password):
         return pwd_context.verify(password, self.password_hash)
 
-    def generate_auth_token(self, expiration = 600):
-        s = Serializer(app.config['SECRET_KEY'], expires_in = expiration)
-        return s.dumps({ 'id': self.id })
+    def generate_auth_token(self, expiration=600):
+        s = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
+        return s.dumps({'id': self.id})
 
     @staticmethod
     def verify_auth_token(token):
@@ -55,9 +62,11 @@ class Account(db.Model):
         try:
             data = s.loads(token)
         except SignatureExpired:
-            return None # valid token, but expired
+            log.error('Signature expired! data={}'.format(token))
+            return None  # valid token, but expired
         except BadSignature:
-            return None # invalid token
+            log.error('Bad signature! data={}'.format(token))
+            return None  # invalid token
         user = Account.query.get(data['id'])
         return user
 
@@ -66,16 +75,17 @@ class Account(db.Model):
 
 
 class File(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
+
+    id = db.Column(db.Integer, primary_key=True)
     filename = db.Column(db.String(80))
     location = db.Column(db.String(120))
-    priority = db.Column(db.Integer, index = True)
+    priority = db.Column(db.Integer, index=True)
     timestamp = db.Column(db.DateTime)
     account_ref = db.Column(db.Integer, db.ForeignKey('account.id'))
-    account_instance = db.relationship('Account',
-        backref=db.backref('file', lazy='dynamic'))
+    account_instance = db.relationship(
+        'Account', backref=db.backref('file', lazy='dynamic'))
 
-    def __init__(self, filename, location, account_instance, priority = PRIORITY.medium):
+    def __init__(self, filename, location, account_instance, priority=PRIORITY.medium):
         self.filename = filename
         self.location = location
         self.account_instance = account_instance
@@ -85,52 +95,57 @@ class File(db.Model):
     def __repr__(self):
         return '<File %r - %r>' % (self.account_instance, self.location)
 
+
 class Conversion(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
+
+    id = db.Column(db.Integer, primary_key=True)
     output_format = db.Column(db.String(10))
-    status = db.Column(db.Integer, index = True)
-    doc_id = db.Column(db.String(40), index = True)
+    status = db.Column(db.Integer, index=True)
+    doc_id = db.Column(db.String(40), index=True)
 
     file_ref = db.Column(db.Integer, db.ForeignKey('file.id'))
-    file_instance = db.relationship('File',
-        backref=db.backref('conversion', lazy='dynamic'))
+    file_instance = db.relationship(
+        'File', backref=db.backref('conversion', lazy='dynamic'))
 
-    def __init__(self, file_instance, output_format, status = STATUS.introduced):
+    def __init__(self, file_instance, output_format, status=STATUS.introduced):
         self.file_instance = file_instance
         self.output_format = output_format
         self.status = status
         self.doc_id = get_uuid()
 
     def __repr__(self):
-        return '<Conversion %r - %r>' % (self.file_instance, self.output_format)
+        return '<Conversion %r - %r>' % (
+            self.file_instance, self.output_format)
 
     def get_remote_location(self):
-        filename = rename_filename_with_extension(self.file_instance.filename,
-            self.output_format)
-        return os.path.join(app.config['REMOTE_DUMP_FOLDER'], self.doc_id, filename)
+        filename = rename_filename_with_extension(
+            self.file_instance.filename, self.output_format)
+        return os.path.join(
+            app.config['REMOTE_DUMP_FOLDER'], self.doc_id, filename)
 
     @classmethod
     def get_by_doc_id(cls, docId, userId):
-        conversion = cls.query.filter_by(doc_id = docId).first()
+        conversion = cls.query.filter_by(doc_id=docId).first()
         if conversion.file_instance.account_instance.id == userId:
             return conversion
 
     @classmethod
     def register_file(cls, filename, location, account_instance, output_formats, priority):
         data = {}
-        f = File(filename = filename, location = location, account_instance = account_instance, priority = priority)
+        f = File(filename=filename, location=location,
+                 account_instance=account_instance, priority=priority)
         db.session.add(f)
         for output_format in set(output_formats):
-            c = cls(file_instance = f, output_format = output_format)
+            c = cls(file_instance=f, output_format=output_format)
             data[output_format] = c.doc_id
             db.session.add(c)
         db.session.commit()
         return data
 
     @classmethod
-    def get_requests_by_priority(cls, status = STATUS.introduced, limit = 3):
+    def get_requests_by_priority(cls, status=STATUS.introduced, limit=3):
         request_query = cls.query\
-            .filter_by(status = status)\
+            .filter_by(status=status)\
             .join(File)\
             .order_by(File.priority)
 

@@ -1,6 +1,7 @@
 OUTPUT_FOLDER = 'output/'
 TEMP_FOLDER = 'tmp/'
 
+
 class GeneralConverter(object):
 
     """
@@ -15,7 +16,7 @@ class GeneralConverter(object):
         self.tmp_folder = TEMP_FOLDER
         self.final_format = final_format
         self.file_batch = input_files_objects
-  
+
     def convert(self):
         return [self._single_convert(input_file_object)
                 for input_file_object in self.file_batch]
