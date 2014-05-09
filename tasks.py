@@ -61,10 +61,10 @@ def document_converter(request_ids):
 
         # POST to callback for conversion queued
         post_handler.apply_async((callback,
-                                  {
+                                  [{
                                       'status': TEXT_STATUS[conversion.status],
                                       'doc_id': conversion.doc_id
-                                  }),
+                                  }]),
                                  queue='post_handler')
 
         if fm.is_converted():
