@@ -58,6 +58,7 @@ class Account(db.Model):
             return None # valid token, but expired
         except BadSignature:
             return None # invalid token
+
         user = Account.query.get(data['id'])
         return user
 
