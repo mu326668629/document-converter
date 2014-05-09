@@ -9,6 +9,8 @@ import subprocess
 import threading
 import requests
 
+from logger import log
+
 MIME_TO_EXTENSION = {
     'text/html': 'html',
     'application/pdf': 'pdf',
@@ -88,7 +90,7 @@ def get_mime_type(file_path):
         mime_type = magic.from_file(
             file_path.encode('utf-8'), mime=True)
     except IOError, e:
-        print e
+        log.error('Error getting MIME type : {}'.format(e))
         mime_type = None
     if mime_type is None:
         mime_type, mime_encoding = mimetypes.guess_type(

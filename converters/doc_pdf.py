@@ -1,10 +1,11 @@
 import os
 import sys
 import subprocess
-import logging as log
 sys.path.append('..')
 
 from config import UPLOAD_FOLDER
+from logger import log
+
 PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 TMP_DIR = os.path.join(PARENT_DIR, UPLOAD_FOLDER)
 CONVERTER_LOCATION = '''nice libreoffice --headless --convert-to\
@@ -12,7 +13,7 @@ CONVERTER_LOCATION = '''nice libreoffice --headless --convert-to\
 
 
 from general import GeneralConverter
-from file_manager import rename_filename_with_extension
+from utils import rename_filename_with_extension
 
 
 class DocPdf(GeneralConverter):
@@ -43,5 +44,5 @@ class DocPdf(GeneralConverter):
                 from .utilities import handle_failed_conversion
                 handle_failed_conversion(input_file_path)
                 log.error('Conversion failed from DOC => PDF for {}'.format(
-                    input_file_path))
+                    converter))
         return None

@@ -1,10 +1,10 @@
 import sys
 import os
 import subprocess
-import logging as log
 
 sys.path.append('..')
 
+from logger import log
 from config import UPLOAD_FOLDER, LIBRE_OFFICE_HOST, LIBRE_OFFICE_PORT
 PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 TMP_DIR = os.path.join(PARENT_DIR, UPLOAD_FOLDER)
@@ -14,7 +14,7 @@ port={libre_office_port},tcpNoDelay=1;urp;StarOffice.ComponentContext -f pdf\
 
 
 from general import GeneralConverter
-from file_manager import rename_filename_with_extension
+from utils import rename_filename_with_extension
 from config import UPLOAD_FOLDER
 
 
@@ -44,6 +44,8 @@ class PptPdf(GeneralConverter):
             if os.path.isfile(output_file):
                 return output_file
             else:
-                log.error('Conversion from PPT => PDF failed for {}'.format(
-                    input_file_path))
+                from .utilities import handle_failed_conversion
+                handle_failed_conversion(input_file_path)
+                log.error('Conversion failed from PPT => PDF for {}'.format(
+                    converter))
         return None

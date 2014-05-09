@@ -9,9 +9,9 @@ class ENVIRONMENT:
     development = 'development'
     production = 'production'
 
-ADMINSTRATORS = (
+ADMINS = [
     'vedarth@aplopio.com',
-    'ravi@aplopio.com')
+    'ravi@aplopio.com']
 
 DEBUG = False
 ENV = os.environ.get('APP_ENVIRONMENT', ENVIRONMENT.development)
@@ -32,10 +32,10 @@ ALLOWED_EXTENSIONS = ['pdf', 'txt', 'html', 'doc', 'docx']
 LIBRE_OFFICE_HOST = '127.0.0.1'
 LIBRE_OFFICE_PORT = '2220'
 
+LOGENTRIES_KEY = os.environ.get('LOGENTRIES_KEY', '')
+
 
 app = Flask(__name__)
-mail = Mail(app)
-mail_on_500(app, ADMINSTRATORS)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['OUTPUT_FOLDER'] = OUTPUT_FOLDER
 app.config.from_object(__name__)

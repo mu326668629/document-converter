@@ -1,34 +1,39 @@
 import os
 import io
-import logging
 
 from config import app
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 
-from utils import download_url, rename_filename_with_extension, gzip_file
+from utils import download_url, gzip_file
+from logger import log
 
 AWS_S3_CONNECTION = S3Connection()
 AWS_S3_BUCKET = AWS_S3_CONNECTION.get_bucket(app.config['S3_BUCKET'])
 
-def get_signed_url(destination, bucket = AWS_S3_BUCKET):
+
+def get_signed_url(destination, bucket=AWS_S3_BUCKET):
     bucket_key = Key(bucket)
     bucket_key.key = destination
     return bucket_key.generate_url(3600, query_auth=True, force_http=True)
 
-def upload_to_remote(destination, filepath, bucket = AWS_S3_BUCKET):
+
+def upload_to_remote(destination, filepath, bucket=AWS_S3_BUCKET):
     bucket_key = Key(bucket)
     bucket_key.key = destination
     bucket_key.set_contents_from_filename(filepath)
     return destination
+
 
 def write_stream(destination, stream):
     with io.open(destination, 'w+', encoding='utf-8') as f:
         f.write(stream)
         return destination
 
+
 class FileManager(object):
-    def __init__(self, resource_path, input_file_path = None, **kwargs):
+
+    def __init__(self, resource_path, input_file_path=None, **kwargs):
         self.resource_path = resource_path
         self.bucket = kwargs.get('bucket', AWS_S3_BUCKET)
         self.bucket_key = Key(self.bucket)
@@ -39,13 +44,17 @@ class FileManager(object):
         self.converted = False
 
     def is_converted(self):
-        return self.converted == True
+        if self.converted:
+            return True
+        return False
 
     def get_input_file_path(self):
         if not self.input_file_path:
             remote_path = get_signed_url(self.resource_path, self.bucket)
-            self.input_file_path = download_url(remote_path, app.config['UPLOAD_FOLDER'],
-                target_filename = os.path.basename(self.resource_path), timestamp = True)
+            self.input_file_path = download_url(
+                remote_path, app.config['UPLOAD_FOLDER'],
+                target_filename=os.path.basename(self.resource_path),
+                timestamp=True)
         return self.input_file_path
 
     def get_input_stream(self):
@@ -55,7 +64,7 @@ class FileManager(object):
         try:
             os.remove(self.input_file_path)
         except Exception, e:
-            logging.debug('{}'.format(e.message))
+            log.debug('{}'.format(e.message))
 
     def get_output_file_path(self):
         return self.output_file_path
@@ -68,17 +77,17 @@ class FileManager(object):
         try:
             os.remove(self.output_file_path)
         except Exception, e:
-            logging.debug('{}'.format(e.message))
+            log.debug('{}'.format(e.msage))
 
     def set_remote_destination(self, remote_destination):
         self.remote_destination = remote_destination
 
     def upload_output_file(self):
-        self.output_file_path = gzip_file(self.output_file_path, unlink = True)
+        self.output_file_path = gzip_file(self.output_file_path, unlink=True)
         if self.remote_destination:
             self.bucket_key.key = self.remote_destination
-            self.bucket_key.set_contents_from_filename(self.output_file_path,
-                headers = {'Content-Encoding': 'gzip'})
+            self.bucket_key.set_contents_from_filename(
+                self.output_file_path, headers={'Content-Encoding': 'gzip'})
             return get_signed_url(self.remote_destination, self.bucket)
         else:
             raise Exception("REMOTE DESTINATION not provided")

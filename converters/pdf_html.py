@@ -1,14 +1,12 @@
 import sys
 sys.path.append('..')
 
+from logger import log
 from general import GeneralConverter
-from file_manager import FileManager
-from file_manager import rename_filename_with_extension
+from utils import rename_filename_with_extension
 from config import UPLOAD_FOLDER
-from subprocess import call
-import urlparse
 import os
-import shutil
+
 
 class PdfHtml(GeneralConverter):
     """
@@ -30,7 +28,11 @@ class PdfHtml(GeneralConverter):
                 os.system('mv %s %s'%(output_file_name, UPLOAD_FOLDER))
                 return os.path.join(UPLOAD_FOLDER, output_file_name)
             except IOError:
-                #TODO: Log the errors
+                from .utilities import handle_failed_conversion
+                input_file_path = input_file_object.get_input_file_path()
+                handle_failed_conversion(input_file_path)
+                log.error('Conversion failed from PDF => HTML for {}'.format(
+                    input_file_path))
                 return None
         else:
             return None
