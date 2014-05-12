@@ -29,8 +29,9 @@ markdown2==2.2.1
 meld3==0.6.10
 passlib==1.6.2
 psycopg2==2.5.2
---allow-external pyPdf==.1.13
---allow-unverified pyPdf==1.13
+--allow-external pyPdf
+--allow-unverified pyPdf
+pyPdf
 python-magic==0.4.6
 pytz==2014.1
 redis==2.9.1
