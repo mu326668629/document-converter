@@ -31,7 +31,7 @@ passlib==1.6.2
 psycopg2==2.5.2
 --allow-external pyPdf
 --allow-unverified pyPdf
-pyPdf
+pyPdf==1.13
 python-magic==0.4.6
 pytz==2014.1
 redis==2.9.1
