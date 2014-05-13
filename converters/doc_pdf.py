@@ -14,6 +14,7 @@ CONVERTER_LOCATION = '''nice libreoffice --headless --convert-to\
 
 from general import GeneralConverter
 from utils import rename_filename_with_extension
+from utils import ConverterCommand
 
 
 class DocPdf(GeneralConverter):
@@ -36,7 +37,8 @@ class DocPdf(GeneralConverter):
                 output_file_path=output_file_path,
                 input_file_path=input_file_path)
 
-            subprocess.call(converter.split())
+            command = ConverterCommand(converter.split(), 20)
+            command.execute()
             output_file = os.path.join(output_file_path, output_file_name)
             if os.path.isfile(output_file):
                 return output_file
