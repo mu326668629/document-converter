@@ -99,7 +99,7 @@ def upload():
     allowed_extensions = app.config['ALLOWED_EXTENSIONS']
     if file:
         if allowed_filename(file.filename, allowed_extensions):
-            filename = secure_filename(file.filename)
+            filename = secure_filename(file.filename).strip()
             local_path = os.path.join(app.config['UPLOAD_FOLDER'],
                                       timestamp_filename(filename))
             file.save(local_path)
@@ -108,11 +108,15 @@ def upload():
     else:
         fileURL = request.form.get('fileURL')
         if fileURL:
-            filename = get_filename_from_url(fileURL)
+            filename = get_filename_from_url(fileURL).strip()
             local_path = download_url(
                 fileURL, app.config['UPLOAD_FOLDER'], timestamp=True)
         else:
             return jsonify({'Error': 'File seems screwed'}), 400
+
+    # Truncate filename to 80 characters, preserve file extension
+    if len(filename) > 80:
+        filename = filename[-80:]
 
     # Upload to remote and remove file from local
     remote_destination = os.path.join(app.config['REMOTE_INPUT_FOLDER'],
@@ -155,7 +159,7 @@ def handle_internal_error(exception):
     mail = Mail(app)
     recipients = [r for r in ADMINS]
     msg = Message(
-        '[Flask|ErrorMail] Exception Detected: {}'.format(exception.message),
+        '[Document Converter] Exception Detected',
         sender='noreply@localhost', recipients=recipients)
 
     msg_contents = [

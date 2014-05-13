@@ -85,7 +85,11 @@ class File(db.Model):
     account_instance = db.relationship(
         'Account', backref=db.backref('file', lazy='dynamic'))
 
-    def __init__(self, filename, location, account_instance, priority=PRIORITY.medium):
+    def __init__(self, filename, location, account_instance,
+                 priority=PRIORITY.medium):
+        filename = filename.strip()
+        if len(filename) > 80:
+            filename = filename[-80:]
         self.filename = filename
         self.location = location
         self.account_instance = account_instance
