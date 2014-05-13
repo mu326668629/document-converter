@@ -41,12 +41,12 @@ class ConverterCommand(threading.Thread):
 
     def run(self):
         if self._store_output:
-            print 'Command using PIPE'
+            log.debug('Command using PIPE')
             self.p = subprocess.Popen(self._cmd, stdout=subprocess.PIPE)
             self.output = self.p.communicate()[0]
             self.return_code = self.p.returncode
         else:
-            print 'Command not using PIPE'
+            log.debug('Command not using PIPE')
             self.p = subprocess.Popen(self._cmd)
             self.return_code = self.p.wait()
 
