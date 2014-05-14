@@ -14,7 +14,7 @@ CONVERTER_LOCATION = '''xvfb-run\
 
 from general import GeneralConverter
 from utils import rename_filename_with_extension
-from utils import ConverterCommand
+from utilities import ConverterCommand
 
 
 class HtmlPdf(GeneralConverter):
