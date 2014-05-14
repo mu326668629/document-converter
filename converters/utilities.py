@@ -29,36 +29,6 @@ AVAILABLE_CONVERTERS = [(HtmlPdf, 'htmlpdf'), (HtmlTxt, 'htmltxt'),
                         (DocPdf, 'docpdf'), (PptPdf, 'pptpdf')]
 
 
-class ConverterCommand(threading.Thread):
-
-    def __init__(self, cmd, timeout, store_output=None):
-        threading.Thread.__init__(self)
-        self._cmd = cmd
-        self._timeout = timeout
-        self._store_output = store_output
-        self.return_code = None
-        self.output = None
-
-    def run(self):
-        if self._store_output:
-            log.debug('Command using PIPE')
-            self.p = subprocess.Popen(self._cmd, stdout=subprocess.PIPE)
-            self.output = self.p.communicate()[0]
-            self.return_code = self.p.returncode
-        else:
-            log.debug('Command not using PIPE')
-            self.p = subprocess.Popen(self._cmd)
-            self.return_code = self.p.wait()
-
-    def execute(self):
-        self.start()
-        self.join(self._timeout)
-
-        if self.is_alive():
-            self.p.terminate()
-            self.join()
-
-
 def class_selector(input_format, output_format, result=None):
     result = result or []
     if input_format == output_format:

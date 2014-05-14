@@ -14,7 +14,7 @@ port={libre_office_port},tcpNoDelay=1;urp;StarOffice.ComponentContext -f pdf\
 
 from general import GeneralConverter
 from utils import rename_filename_with_extension
-from converters.utilities import ConverterCommand
+from utils import ConverterCommand
 
 
 class PptPdf(GeneralConverter):
