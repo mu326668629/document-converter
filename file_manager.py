@@ -26,8 +26,13 @@ def upload_to_remote(destination, filepath, bucket=AWS_S3_BUCKET):
 
 
 def write_stream(destination, stream):
-    with io.open(destination, 'w+', encoding='utf-8') as f:
-        f.write(stream)
+    try:
+        with io.open(destination, 'w+', encoding='utf-8') as f:
+            f.write(stream)
+            return destination
+    except TypeError:
+        log.error('Cannot write to stream {}, text={}'.format(
+            destination, stream))
         return destination
 
 
