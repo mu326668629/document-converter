@@ -4,7 +4,6 @@ import json
 
 from models import db, STATUS, PRIORITY, File, Conversion, Account
 from config import app
-from utils import Command
 from semisync import semisync
 import requests
 

@@ -111,24 +111,31 @@ def gzip_file(in_file, unlink=False):
     return out_gz
 
 
-class Command(object):
-    def __init__(self, cmd):
-        self.cmd = cmd
-        self.process = None
+class ConverterCommand(threading.Thread):
 
-    def run(self, timeout):
-        def target():
-            print 'Thread started'
-            self.process = subprocess.Popen(self.cmd, shell=True)
-            self.process.communicate()
-            print 'Thread finished'
+    def __init__(self, cmd, timeout, store_output=None):
+        threading.Thread.__init__(self)
+        self._cmd = cmd
+        self._timeout = timeout
+        self._store_output = store_output
+        self.return_code = None
+        self.output = None
 
-        thread = threading.Thread(target=target)
-        thread.start()
+    def run(self):
+        if self._store_output:
+            log.debug('Command using PIPE')
+            self.p = subprocess.Popen(self._cmd, stdout=subprocess.PIPE)
+            self.output = self.p.communicate()[0]
+            self.return_code = self.p.returncode
+        else:
+            log.debug('Command not using PIPE')
+            self.p = subprocess.Popen(self._cmd)
+            self.return_code = self.p.wait()
 
-        thread.join(timeout)
-        if thread.is_alive():
-            print 'Terminating process'
-            self.process.terminate()
-            thread.join()
-        print self.process.returncode
+    def execute(self):
+        self.start()
+        self.join(self._timeout)
+
+        if self.is_alive():
+            self.p.terminate()
+            self.join()
