@@ -45,9 +45,9 @@ class HtmlPdf(GeneralConverter):
             subprocess.call(cleaner.split())
 
             converter = CONVERTER_LOCATION.format(
-                input_file_path=input_file_path,
+                input_file_path=intermediate_path,
                 output_file_path=output_file_path)
-            
+
             subprocess.call(converter.split())
             if os.path.isfile(output_file_path):
                 return output_file_path
