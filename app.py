@@ -3,6 +3,7 @@ import traceback
 
 from utils import (get_uuid, timestamp_filename, allowed_filename,
                    get_filename_from_url, download_url)
+from utils import FILE_NAME_LIMIT
 from config import app, HEARTBEAT_URL, ADMINS
 from models import db, Conversion, Account, STATUS, PRIORITY
 from file_manager import get_signed_url, upload_to_remote
@@ -99,7 +100,7 @@ def upload():
     allowed_extensions = app.config['ALLOWED_EXTENSIONS']
     if file:
         if allowed_filename(file.filename, allowed_extensions):
-            filename = secure_filename(file.filename).strip()
+            filename = secure_filename(file.filename).strip()[-FILE_NAME_LIMIT]
             local_path = os.path.join(app.config['UPLOAD_FOLDER'],
                                       timestamp_filename(filename))
             file.save(local_path)
@@ -113,10 +114,6 @@ def upload():
                 fileURL, app.config['UPLOAD_FOLDER'], timestamp=True)
         else:
             return jsonify({'Error': 'File seems screwed'}), 400
-
-    # Truncate filename to 80 characters, preserve file extension
-    if len(filename) > 80:
-        filename = filename[-80:]
 
     # Upload to remote and remove file from local
     remote_destination = os.path.join(app.config['REMOTE_INPUT_FOLDER'],

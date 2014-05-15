@@ -22,6 +22,7 @@ MIME_TO_EXTENSION = {
 FILE_EXTENSIONS = ['pdf', 'txt', 'html', 'doc',
                    'docx', 'ppt', 'pptx', 'rtf', 'odt']
 
+FILE_NAME_LIMIT = 79
 
 def get_attrs(klass):
     return [k for k in klass.__dict__.keys()
@@ -49,7 +50,8 @@ def rename_filename_with_extension(filename, extension):
 
 
 def get_filename_from_url(url):
-    return url.split('?')[0].split('/')[-1]
+    file_name = url.split('?')[0].split('/')[-1]
+    return file_name[-FILE_NAME_LIMIT:]
 
 
 def download_url(url, destination_dir, target_filename=None, timestamp=True):
