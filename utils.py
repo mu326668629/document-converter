@@ -71,7 +71,7 @@ def download_url(url, destination_dir, target_filename=None, timestamp=True):
 
     cdn_response = requests.get(url, stream=True)
 
-    if cdn_response.status_code not 200:
+    if cdn_response.status_code is not 200:
         raise FileAccessDenied(status_code=cdn_response.status_code,
                                message=cdn_response.content)
 
