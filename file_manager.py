@@ -15,7 +15,7 @@ AWS_S3_BUCKET = AWS_S3_CONNECTION.get_bucket(app.config['S3_BUCKET'])
 def get_signed_url(destination, bucket=AWS_S3_BUCKET):
     bucket_key = Key(bucket)
     bucket_key.key = destination
-    return bucket_key.generate_url(3600, query_auth=True, force_http=True)
+    return bucket_key.generate_url(7200, query_auth=True, force_http=True)
 
 
 def upload_to_remote(destination, filepath, bucket=AWS_S3_BUCKET):
