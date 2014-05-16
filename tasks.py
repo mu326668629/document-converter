@@ -137,10 +137,10 @@ def get_dictionary_request(conversion):
 def send_postback(url, data):
 
     try:
-        response = requests.post(url, data=json.dumps(data), timeout=15)
+        response = requests.post(url, data=json.dumps(data), timeout=60)
     except Exception as e:
         log.error('Postback error {}'.format(e))
-        post_handler.apple_async((url, data))
+        post_handler.apply_async((url, data))
 
     for d in data:
         log.info('Postback status {} for doc_id={}, signed_url={}'.format(
