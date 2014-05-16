@@ -147,7 +147,7 @@ class Conversion(db.Model):
         return data
 
     @classmethod
-    def get_requests_by_priority(cls, status=STATUS.introduced, limit=3):
+    def get_requests_by_priority(cls, status=STATUS.introduced, limit=1):
         request_query = cls.query\
             .filter_by(status=status)\
             .join(File)\
