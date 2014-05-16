@@ -78,7 +78,7 @@ def download_url(url, destination_dir, target_filename=None, timestamp=True):
     target_filepath = os.path.join(destination_dir, target_filename)
 
     with open(target_filepath, 'wb') as f:
-        for chunk in r.iter_content(chunk_size=1024):
+        for chunk in cdn_response.iter_content(chunk_size=1024):
             if chunk:
                 f.write(chunk)
                 f.flush()
