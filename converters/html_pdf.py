@@ -2,6 +2,7 @@ import time
 import sys
 import os
 import subprocess
+import codecs
 
 sys.path.insert(0, '..')
 
@@ -10,14 +11,12 @@ from logger import log
 from config import UPLOAD_FOLDER
 PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 TMP_DIR = os.path.join(PARENT_DIR, UPLOAD_FOLDER)
-REMOVE_IFRAME = """sed 's/<iframe[^>]*>.*<\/iframe>//g'\
- {input_file_path} > {intermediate_path}"""
 CONVERTER_LOCATION = '''xvfb-run\
  /usr/bin/wkhtmltopdf --disable-javascript {input_file_path} {output_file_path}'''
 
 
 from general import GeneralConverter
-from utils import rename_filename_with_extension
+from utils import rename_filename_with_extension, remove_tags
 
 
 class HtmlPdf(GeneralConverter):
@@ -39,10 +38,10 @@ class HtmlPdf(GeneralConverter):
             output_file_path = os.path.join(TMP_DIR, output_file_name)
             intermediate_path = os.path.join(TMP_DIR, intermediate_filename)
 
-            cleaner = REMOVE_IFRAME.format(
-                input_file_path=input_file_path,
-                intermediate_path=intermediate_path)
-            subprocess.call(cleaner.split())
+            with codecs.open(input_file_path, "r", "utf-8") as f:
+                cleaned_content = remove_tags(f.read())
+                with open(intermediate_path, 'w') as w:
+                    w.write(cleaned_content)
 
             converter = CONVERTER_LOCATION.format(
                 input_file_path=intermediate_path,
@@ -57,3 +56,9 @@ class HtmlPdf(GeneralConverter):
                 log.error('Conversion failed from HTML => PDF for {}'.format(
                     converter))
         return None
+
+{'a':
+1,
+'sys':
+[]
+}

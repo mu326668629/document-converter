@@ -7,9 +7,10 @@ import magic
 import mimetypes
 import subprocess
 import threading
-import requests
-
 from logger import log
+
+import requests
+from BeautifulSoup import BeautifulSoup
 
 MIME_TO_EXTENSION = {
     'text/html': 'html',
@@ -132,3 +133,11 @@ class Command(object):
             self.process.terminate()
             thread.join()
         print self.process.returncode
+
+
+def remove_tags(content, tags=None):
+    soup = BeautifulSoup(content)
+    if not tags:
+        tags = ["iframe"]
+    [s.extract() for tag in tags for s in soup(tag)]
+    return soup.renderContents().decode('utf8')
