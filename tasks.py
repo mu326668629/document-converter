@@ -54,6 +54,10 @@ def document_converter(request_ids):
     # Get all conversion requests.
     for request_id in request_ids:
         conversion = Conversion.query.get(request_id)
+
+        if 'completed' in TEXT_STATUS[conversion.status]:
+            continue
+
         # Request callback
         callback = conversion.file_instance.account_instance.callback
 
@@ -66,8 +70,7 @@ def document_converter(request_ids):
                                   [{
                                       'status': TEXT_STATUS[conversion.status],
                                       'doc_id': conversion.doc_id
-                                  }]),
-                                 queue='post_handler')
+                                  }]))
 
         if fm.is_converted():
             log.info('File converted conversion_to {} id={}, doc_id={}, file={}, status=success'.format(
@@ -77,8 +80,7 @@ def document_converter(request_ids):
             db.session.commit()
 
             # Queue converted file for uploading
-            remote_upload_handler.apply_async((fm, conversion.id),
-                                              queue='post_handler')
+            remote_upload_handler.apply_async((fm, conversion.id))
         else:
             log.error('File not converted to {}! file={}, status=failed, conversion_id={}'.format(
                 conversion.output_format, conversion.file_instance.location,
@@ -92,13 +94,7 @@ def document_converter(request_ids):
 
 @app.task
 def post_handler(url, data):
-    response = requests.post(url, data=json.dumps(data))
-    for d in data:
-        log.debug('Postback status {} for doc_id={}, signed_url={}'.format(
-            response.status_code,
-            d.get('doc_id', ''), d.get('signed_url', '')))
-    request_fetcher.delay()
-
+    send_postback(url, data)
 
 @app.task
 def remote_upload_handler(file_manager_obj, conversion_id):
@@ -127,7 +123,7 @@ def handle_conversion_completion(conversion=None, status=None):
     output = [get_dictionary_request(conversion_sib)
               for conversion_sib in conversion_siblings]
 
-    post_handler.apply_async((callback, output), queue='post_handler')
+    send_postback(callback, output)
 
 
 def get_dictionary_request(conversion):
@@ -136,3 +132,11 @@ def get_dictionary_request(conversion):
         'signed_url': get_signed_url(conversion.get_remote_location()),
         'doc_id': conversion.doc_id,
     }
+
+
+def send_postback(url, data):
+    response = requests.post(url, data=json.dumps(data))
+    for d in data:
+        log.info('Postback status {} for doc_id={}, signed_url={}'.format(
+            response.status_code,
+            d.get('doc_id', ''), d.get('signed_url', '')))

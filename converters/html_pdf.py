@@ -17,6 +17,7 @@ CONVERTER_LOCATION = '''xvfb-run\
 
 from general import GeneralConverter
 from utils import rename_filename_with_extension, remove_tags
+from utils import ConverterCommand
 
 
 class HtmlPdf(GeneralConverter):
@@ -47,7 +48,8 @@ class HtmlPdf(GeneralConverter):
                 input_file_path=intermediate_path,
                 output_file_path=output_file_path)
 
-            subprocess.call(converter.split())
+            command = ConverterCommand(converter.split(), 20)
+            command.execute()
             if os.path.isfile(output_file_path):
                 return output_file_path
             else:
@@ -57,8 +59,3 @@ class HtmlPdf(GeneralConverter):
                     converter))
         return None
 
-{'a':
-1,
-'sys':
-[]
-}

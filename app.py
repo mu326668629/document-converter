@@ -3,6 +3,7 @@ import traceback
 
 from utils import (get_uuid, timestamp_filename, allowed_filename,
                    get_filename_from_url, download_url)
+from utils import FILE_NAME_LIMIT
 from config import app, HEARTBEAT_URL, ADMINS
 from models import db, Conversion, Account, STATUS, PRIORITY
 from file_manager import get_signed_url, upload_to_remote
@@ -99,7 +100,7 @@ def upload():
     allowed_extensions = app.config['ALLOWED_EXTENSIONS']
     if file:
         if allowed_filename(file.filename, allowed_extensions):
-            filename = secure_filename(file.filename)
+            filename = secure_filename(file.filename).strip()[-FILE_NAME_LIMIT]
             local_path = os.path.join(app.config['UPLOAD_FOLDER'],
                                       timestamp_filename(filename))
             file.save(local_path)
@@ -108,7 +109,7 @@ def upload():
     else:
         fileURL = request.form.get('fileURL')
         if fileURL:
-            filename = get_filename_from_url(fileURL)
+            filename = get_filename_from_url(fileURL).strip()
             local_path = download_url(
                 fileURL, app.config['UPLOAD_FOLDER'], timestamp=True)
         else:
@@ -155,7 +156,7 @@ def handle_internal_error(exception):
     mail = Mail(app)
     recipients = [r for r in ADMINS]
     msg = Message(
-        '[Flask|ErrorMail] Exception Detected: {}'.format(exception.message),
+        '[Document Converter] Exception Detected',
         sender='noreply@localhost', recipients=recipients)
 
     msg_contents = [

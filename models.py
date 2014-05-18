@@ -85,7 +85,11 @@ class File(db.Model):
     account_instance = db.relationship(
         'Account', backref=db.backref('file', lazy='dynamic'))
 
-    def __init__(self, filename, location, account_instance, priority=PRIORITY.medium):
+    def __init__(self, filename, location, account_instance,
+                 priority=PRIORITY.medium):
+        filename = filename.strip()
+        if len(filename) > 80:
+            filename = filename[-80:]
         self.filename = filename
         self.location = location
         self.account_instance = account_instance
@@ -143,7 +147,7 @@ class Conversion(db.Model):
         return data
 
     @classmethod
-    def get_requests_by_priority(cls, status=STATUS.introduced, limit=3):
+    def get_requests_by_priority(cls, status=STATUS.introduced, limit=1):
         request_query = cls.query\
             .filter_by(status=status)\
             .join(File)\

@@ -23,6 +23,7 @@ MIME_TO_EXTENSION = {
 FILE_EXTENSIONS = ['pdf', 'txt', 'html', 'doc',
                    'docx', 'ppt', 'pptx', 'rtf', 'odt']
 
+FILE_NAME_LIMIT = 79
 
 def get_attrs(klass):
     return [k for k in klass.__dict__.keys()
@@ -50,7 +51,8 @@ def rename_filename_with_extension(filename, extension):
 
 
 def get_filename_from_url(url):
-    return url.split('?')[0].split('/')[-1]
+    file_name = url.split('?')[0].split('/')[-1]
+    return file_name[-FILE_NAME_LIMIT:]
 
 
 def download_url(url, destination_dir, target_filename=None, timestamp=True):
@@ -133,6 +135,36 @@ class Command(object):
             self.process.terminate()
             thread.join()
         print self.process.returncode
+
+
+class ConverterCommand(threading.Thread):
+
+    def __init__(self, cmd, timeout, store_output=None):
+        threading.Thread.__init__(self)
+        self._cmd = cmd
+        self._timeout = timeout
+        self._store_output = store_output
+        self.return_code = None
+        self.output = None
+
+    def run(self):
+        if self._store_output:
+            log.debug('Command using PIPE')
+            self.p = subprocess.Popen(self._cmd, stdout=subprocess.PIPE)
+            self.output = self.p.communicate()[0]
+            self.return_code = self.p.returncode
+        else:
+            log.debug('Command not using PIPE')
+            self.p = subprocess.Popen(self._cmd)
+            self.return_code = self.p.wait()
+
+    def execute(self):
+        self.start()
+        self.join(self._timeout)
+
+        if self.is_alive():
+            self.p.terminate()
+            self.join()
 
 
 def remove_tags(content, tags=None):
