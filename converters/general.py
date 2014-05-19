@@ -1,5 +1,13 @@
-OUTPUT_FOLDER = 'output/'
-TEMP_FOLDER = 'tmp/'
+import os
+import sys
+sys.path.append('..')
+
+from config import UPLOAD_FOLDER, OUTPUT_FOLDER
+from utils import ConverterCommand
+
+PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+TMP_DIR = os.path.join(PARENT_DIR, UPLOAD_FOLDER)
+OUTPUT_DIR = os.path.join(PARENT_DIR, OUTPUT_FOLDER)
 
 
 class GeneralConverter(object):
@@ -7,16 +15,24 @@ class GeneralConverter(object):
     """
     This is the base class of all converters.
     """
-    def __init__(self, initial_format, final_format, input_files_objects):
+
+    def __init__(self, initial_format=None, final_format=None,
+                 input_files_objects=None):
         """
         The attributes get initlalized in subclasses.
         """
+        self.output_dir = OUTPUT_DIR
+        self.tmp_dir = TMP_DIR
+
         self.initial_format = initial_format
-        self.output_folder = OUTPUT_FOLDER
-        self.tmp_folder = TEMP_FOLDER
         self.final_format = final_format
         self.file_batch = input_files_objects
 
     def convert(self):
         return [self._single_convert(input_file_object)
                 for input_file_object in self.file_batch]
+
+    def execute(self, converter):
+        command = ConverterCommand(converter.split(), 20)
+        command.execute()
+        return os.path.isfile()
