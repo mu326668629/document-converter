@@ -2,8 +2,6 @@ import sys
 import re
 import os
 import shutil
-import threading
-import subprocess
 import logging as log
 
 sys.path.append('..')
@@ -18,6 +16,7 @@ from pdf_html import PdfHtml
 from txt_html import TxtHtml
 from doc_pdf import DocPdf
 from ppt_pdf import PptPdf
+from rtf_pdf import RtfPdf
 
 from utils import get_file_extension
 
@@ -26,7 +25,8 @@ from file_manager import FileManager
 
 AVAILABLE_CONVERTERS = [(HtmlPdf, 'htmlpdf'), (HtmlTxt, 'htmltxt'),
                         (PdfHtml, 'pdfhtml'), (TxtHtml, 'txthtml'),
-                        (DocPdf, 'docpdf'), (PptPdf, 'pptpdf')]
+                        (DocPdf, 'docpdf'), (PptPdf, 'pptpdf'),
+                        (RtfPdf, 'rtfpdf'), ]
 
 
 def class_selector(input_format, output_format, result=None):

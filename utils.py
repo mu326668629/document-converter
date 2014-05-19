@@ -24,6 +24,14 @@ FILE_EXTENSIONS = ['pdf', 'txt', 'html', 'doc',
 
 FILE_NAME_LIMIT = 79
 
+
+class FileAccessDenied(Exception):
+
+    def __init__(self, *args, **kwargs):
+        super(FileAccessDenied, self).__init__()
+        self.__dict__.update(kwargs)
+
+
 def get_attrs(klass):
     return [k for k in klass.__dict__.keys()
             if not k.startswith('__')
@@ -61,11 +69,16 @@ def download_url(url, destination_dir, target_filename=None, timestamp=True):
     if timestamp:
         target_filename = timestamp_filename(target_filename)
 
-    r = requests.get(url, stream=True)
+    cdn_response = requests.get(url, stream=True)
+
+    if cdn_response.status_code is not 200:
+        raise FileAccessDenied(status_code=cdn_response.status_code,
+                               message=cdn_response.content)
+
     target_filepath = os.path.join(destination_dir, target_filename)
 
     with open(target_filepath, 'wb') as f:
-        for chunk in r.iter_content(chunk_size=1024):
+        for chunk in cdn_response.iter_content(chunk_size=1024):
             if chunk:
                 f.write(chunk)
                 f.flush()
