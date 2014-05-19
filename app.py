@@ -3,7 +3,7 @@ import traceback
 
 from utils import (get_uuid, timestamp_filename, allowed_filename,
                    get_filename_from_url, download_url)
-from utils import FILE_NAME_LIMIT
+from utils import FILE_NAME_LIMIT, FileAccessDenied
 from config import app, HEARTBEAT_URL, ADMINS
 from models import db, Conversion, Account, STATUS, PRIORITY
 from file_manager import get_signed_url, upload_to_remote
@@ -98,6 +98,7 @@ def upload():
     # Get file (either directly or via URL)
     file = request.files.get('file')
     allowed_extensions = app.config['ALLOWED_EXTENSIONS']
+
     if file:
         if allowed_filename(file.filename, allowed_extensions):
             filename = secure_filename(file.filename).strip()[-FILE_NAME_LIMIT]
@@ -109,11 +110,21 @@ def upload():
     else:
         fileURL = request.form.get('fileURL')
         if fileURL:
-            filename = get_filename_from_url(fileURL).strip()
-            local_path = download_url(
-                fileURL, app.config['UPLOAD_FOLDER'], timestamp=True)
+            filename = get_filename_from_url(fileURL)
+
+            try:
+                local_path = download_url(
+                    fileURL, app.config['UPLOAD_FOLDER'], timestamp=True)
+            except FileAccessDenied as fad:
+                return jsonify({
+                    'status': 'error',
+                    'code': fad.status_code,
+                    'message': fad.message
+                }), 500
+
         else:
-            return jsonify({'Error': 'File seems screwed'}), 400
+            return jsonify({'status': 'error',
+                            'message': 'Unable to decode uploaded file'}), 500
 
     # Upload to remote and remove file from local
     remote_destination = os.path.join(app.config['REMOTE_INPUT_FOLDER'],
