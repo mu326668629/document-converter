@@ -1,5 +1,8 @@
+import time
 import sys
 import os
+import subprocess
+import codecs
 
 sys.path.insert(0, '..')
 
@@ -9,11 +12,11 @@ from config import UPLOAD_FOLDER
 PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 TMP_DIR = os.path.join(PARENT_DIR, UPLOAD_FOLDER)
 CONVERTER_LOCATION = '''xvfb-run\
- /usr/bin/wkhtmltopdf {input_file_path} {output_file_path}'''
+ /usr/bin/wkhtmltopdf --disable-javascript {input_file_path} {output_file_path}'''
 
 
 from general import GeneralConverter
-from utils import rename_filename_with_extension
+from utils import rename_filename_with_extension, remove_tags
 from utils import ConverterCommand
 
 
@@ -31,10 +34,18 @@ class HtmlPdf(GeneralConverter):
             input_file_path = input_file_object.get_input_file_path()
             output_file_name = rename_filename_with_extension(
                 os.path.basename(input_file_path), 'pdf')
-
+            
+            intermediate_filename = str(time.time()).replace('.', '') + '.html'
             output_file_path = os.path.join(TMP_DIR, output_file_name)
+            intermediate_path = os.path.join(TMP_DIR, intermediate_filename)
+
+            with codecs.open(input_file_path, "r", "utf-8") as f:
+                cleaned_content = remove_tags(f.read())
+                with open(intermediate_path, 'w') as w:
+                    w.write(cleaned_content)
+
             converter = CONVERTER_LOCATION.format(
-                input_file_path=input_file_path,
+                input_file_path=intermediate_path,
                 output_file_path=output_file_path)
 
             command = ConverterCommand(converter.split(), 20)
@@ -47,3 +58,4 @@ class HtmlPdf(GeneralConverter):
                 log.error('Conversion failed from HTML => PDF for {}'.format(
                     converter))
         return None
+

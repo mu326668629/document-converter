@@ -7,9 +7,10 @@ import magic
 import mimetypes
 import subprocess
 import threading
-import requests
-
 from logger import log
+
+import requests
+from BeautifulSoup import BeautifulSoup
 
 MIME_TO_EXTENSION = {
     'text/html': 'html',
@@ -126,6 +127,29 @@ def gzip_file(in_file, unlink=False):
     return out_gz
 
 
+class Command(object):
+    def __init__(self, cmd):
+        self.cmd = cmd
+        self.process = None
+
+    def run(self, timeout):
+        def target():
+            print 'Thread started'
+            self.process = subprocess.Popen(self.cmd, shell=True)
+            self.process.communicate()
+            print 'Thread finished'
+
+        thread = threading.Thread(target=target)
+        thread.start()
+
+        thread.join(timeout)
+        if thread.is_alive():
+            print 'Terminating process'
+            self.process.terminate()
+            thread.join()
+        print self.process.returncode
+
+
 class ConverterCommand(threading.Thread):
 
     def __init__(self, cmd, timeout, store_output=None):
@@ -154,3 +178,11 @@ class ConverterCommand(threading.Thread):
         if self.is_alive():
             self.p.terminate()
             self.join()
+
+
+def remove_tags(content, tags=None):
+    soup = BeautifulSoup(content)
+    if not tags:
+        tags = ["iframe"]
+    [s.extract() for tag in tags for s in soup(tag)]
+    return soup.renderContents().decode('utf8')
