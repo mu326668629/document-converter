@@ -30,13 +30,12 @@ class TxtHtml(GeneralConverter):
             output_file_name = rename_filename_with_extension(
                 os.path.basename(input_file_object.get_input_file_path()),
                 self.final_format)
-            output_file = write_stream(output_file_name, output_stream)
-            try:
-                open(output_file)
-                os.system('mv %s %s'%(output_file_name, UPLOAD_FOLDER))
-                return os.path.join(UPLOAD_FOLDER, output_file_name)
-            except IOError:
-                print "Conversion Unsuccessfull for txt_html"
-                return None
-        else:
-            return None
+            output_file_path = os.path.join(self.tmp_dir, output_file_name)
+            write_stream(output_file_path, output_stream)
+            if os.path.isfile(output_file_path):
+                return output_file_path
+            else:
+                self.handle_failed_conversion(input_file_object)
+
+        log.error('Conversion failed from TXT => HTML')
+        return None

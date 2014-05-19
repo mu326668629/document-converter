@@ -107,7 +107,7 @@ def get_files_objects(files_paths):
 
 
 def handle_failed_conversion(input_file):
-    if not os.path.isfile(input_file):
+    if not input_file or not os.path.isfile(input_file):
         return
     failed_conversion_dir = os.path.join(TMP_DIR, 'failed_conversions')
     if not os.path.isdir(failed_conversion_dir):
