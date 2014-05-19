@@ -34,10 +34,8 @@ class PdfHtml(GeneralConverter):
 
             if os.path.isfile(output_file_path):
                 return output_file_path
+            else:
+                self.handle_failed_conversion(input_file_object)
 
-        from .utilities import handle_failed_conversion
-        input_file_path = input_file_object.get_input_file_path()
-        handle_failed_conversion(input_file_path)
-        log.error('Conversion failed from PDF => HTML for {}'.format(
-            input_file_path))
+        log.error('Conversion failed from PDF => HTML')
         return None

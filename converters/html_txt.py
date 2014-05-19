@@ -22,7 +22,6 @@ class HtmlTxt(GeneralConverter):
                                       input_file_objects=input_file_objects)
 
     def _single_convert(self, input_file_object):
-        from .utilities import handle_failed_conversion
         if input_file_object:
             input_file_path = input_file_object.get_input_file_path()
             log.info('Converting {} to TXT'.format(input_file_path))
@@ -31,7 +30,7 @@ class HtmlTxt(GeneralConverter):
             try:
                 input_stream = input_file_object.get_input_stream()
             except UnicodeDecodeError, e:
-                handle_failed_conversion(input_file_path)
+                self.handle_failed_conversion(input_file_object)
                 log.error(
                     'Conversion failed from HTML => TXT for {} {}'.format(
                         input_file_path, e)
@@ -49,7 +48,7 @@ class HtmlTxt(GeneralConverter):
             try:
                 output_stream = html_to_text.handle(input_stream)
             except e:
-                handle_failed_conversion(input_file_path)
+                self.handle_failed_conversion(input_file_object)
                 log.error(
                     'Conversion failed from HTML => TXT for {} {}'.format(
                         input_file_path, e)
@@ -64,8 +63,9 @@ class HtmlTxt(GeneralConverter):
 
             if os.path.isfile(output_file_path):
                 return output_file_path
+            else:
+                self.handle_failed_conversion(input_file_object)
 
-        handle_failed_conversion(input_file_path)
-        log.error('Conversion failed from HTML => TXT for {}'.format(
-            input_file_path))
+        self.handle_failed_conversion(input_file_object)
+        log.error('Conversion failed from HTML => TXT')
         return None

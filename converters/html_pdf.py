@@ -47,8 +47,8 @@ class HtmlPdf(GeneralConverter):
             self.execute(converter)
             if os.path.isfile(output_file_path):
                 return output_file_path
+            else:
+                self.handle_failed_conversion(input_file_object)
 
-        from .utilities import handle_failed_conversion
-        handle_failed_conversion(input_file_path)
-        log.error('Conversion failed from HTML => PDF for {}'.format(converter))
+        log.error('Conversion failed from HTML => PDF')
         return None

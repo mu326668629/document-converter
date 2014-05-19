@@ -35,3 +35,8 @@ class GeneralConverter(object):
     def execute(self, converter):
         command = ConverterCommand(converter.split(), 20)
         return command.execute()
+
+    def handle_failed_conversion(self, input_file_object):
+        if input_file_object:
+            from .utilities import handle_failed_conversion
+            handle_failed_conversion(input_file_object.get_input_file_path())

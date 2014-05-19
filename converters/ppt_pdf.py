@@ -36,8 +36,8 @@ class PptPdf(GeneralConverter):
             output_file = os.path.join(output_file_path, output_file_name)
             if os.path.isfile(output_file):
                 return output_file
+            else:
+                self.handle_failed_conversion(input_file_object)
 
-        from .utilities import handle_failed_conversion
-        handle_failed_conversion(input_file_path)
-        log.error('Conversion failed from PPT => PDF for {}'.format(converter))
+        log.error('Conversion failed from PPT => PDF')
         return None

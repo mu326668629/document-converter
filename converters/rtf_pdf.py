@@ -37,14 +37,12 @@ class RtfPdf(GeneralConverter):
                 output_file_path=output_file_path,
                 input_file_path=input_file_path)
 
-            command = ConverterCommand(converter.split(), 20)
-            command.execute()
+            self.execute(converter)
             output_file = os.path.join(output_file_path, output_file_name)
             if os.path.isfile(output_file):
                 return output_file
             else:
-                from .utilities import handle_failed_conversion
-                handle_failed_conversion(input_file_path)
-                log.error('Conversion failed from RTF => PDF for {}'.format(
-                    converter))
+                self.handle_failed_conversion(input_file_path)
+
+        log.error('Conversion failed from RTF => PDF')
         return None
