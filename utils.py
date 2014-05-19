@@ -186,3 +186,16 @@ def remove_tags(content, tags=None):
         tags = ["iframe"]
     [s.extract() for tag in tags for s in soup(tag)]
     return soup.renderContents().decode('utf8')
+
+
+def log_execution_time(func_name):
+    def decorator(func, *args, **kwargs):
+        def wrapper(*args, **kwargs):
+            start_time = time.time()
+            ret = func(*args, **kwargs)
+            end_time = time.time()
+            log.info("{} executed in {}".format(
+                func_name, end_time - start_time))
+            return ret
+        return wrapper
+    return decorator

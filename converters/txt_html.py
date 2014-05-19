@@ -1,14 +1,12 @@
+import os
 import sys
+import markdown2
 sys.path.insert(0, '..')
 
 from general import GeneralConverter
-from file_manager import FileManager
 from file_manager import write_stream
-from utils import rename_filename_with_extension
-from config import UPLOAD_FOLDER
-import markdown2
-import io
-import os
+from utils import rename_filename_with_extension, log_execution_time
+
 
 class TxtHtml(GeneralConverter):
     """
@@ -19,6 +17,7 @@ class TxtHtml(GeneralConverter):
         self.final_format = 'html'
         self.file_batch = input_file_paths
 
+    @log_execution_time('txt_to_html')
     def _single_convert(self, input_file_object):
         if input_file_object:
             input_stream = input_file_object.get_input_stream()

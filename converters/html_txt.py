@@ -7,7 +7,7 @@ sys.path.append('..')
 from logger import log
 from general import GeneralConverter
 from bs4 import BeautifulSoup
-from utils import rename_filename_with_extension
+from utils import rename_filename_with_extension, log_execution_time
 from file_manager import write_stream
 
 
@@ -21,6 +21,7 @@ class HtmlTxt(GeneralConverter):
                                       final_format='txt',
                                       input_file_objects=input_file_objects)
 
+    @log_execution_time('html_to_txt')
     def _single_convert(self, input_file_object):
         if input_file_object:
             input_file_path = input_file_object.get_input_file_path()

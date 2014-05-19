@@ -11,7 +11,8 @@ CONVERTER_LOCATION = '''xvfb-run  /usr/bin/wkhtmltopdf \
 --disable-javascript {input_file_path} {output_file_path}'''
 
 from general import GeneralConverter
-from utils import rename_filename_with_extension, remove_tags
+from utils import (rename_filename_with_extension,
+                   remove_tags, log_execution_time)
 
 
 class HtmlPdf(GeneralConverter):
@@ -24,6 +25,7 @@ class HtmlPdf(GeneralConverter):
                                       final_format='pdf',
                                       input_file_objects=input_file_objects)
 
+    @log_execution_time('html_to_pdf')
     def _single_convert(self, input_file_object):
         if input_file_object:
             input_file_path = input_file_object.get_input_file_path()

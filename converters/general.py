@@ -3,6 +3,7 @@ import sys
 sys.path.append('..')
 
 from config import UPLOAD_FOLDER, OUTPUT_FOLDER
+from utils import log_execution_time
 from utils import ConverterCommand
 
 PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -28,6 +29,7 @@ class GeneralConverter(object):
         self.final_format = final_format
         self.file_batch = input_file_objects
 
+    @log_execution_time('general_convert')
     def convert(self):
         return [self._single_convert(input_file_object)
                 for input_file_object in self.file_batch]
