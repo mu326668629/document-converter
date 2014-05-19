@@ -34,5 +34,4 @@ class GeneralConverter(object):
 
     def execute(self, converter):
         command = ConverterCommand(converter.split(), 20)
-        command.execute()
-        return os.path.isfile()
+        return command.execute()
