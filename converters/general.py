@@ -17,7 +17,7 @@ class GeneralConverter(object):
     """
 
     def __init__(self, initial_format=None, final_format=None,
-                 input_files_objects=None):
+                 input_file_objects=None):
         """
         The attributes get initlalized in subclasses.
         """
