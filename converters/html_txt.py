@@ -66,6 +66,5 @@ class HtmlTxt(GeneralConverter):
             else:
                 self.handle_failed_conversion(input_file_object)
 
-        self.handle_failed_conversion(input_file_object)
         log.error('Conversion failed from HTML => TXT')
         return None
