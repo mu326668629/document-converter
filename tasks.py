@@ -135,6 +135,7 @@ def get_dictionary_request(conversion):
     }
 
 
+@log_execution_time('send_postback')
 def send_postback(url, data):
 
     try:
