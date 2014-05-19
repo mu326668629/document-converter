@@ -79,14 +79,15 @@ def document_converter(request_ids):
             db.session.commit()
 
             # Queue converted file for uploading
-            remote_upload_handler.apply_async((fm, conversion.id))
+            remote_upload_handler(fm, conversion.id)
         else:
             log.error('File not converted to {}! file={}, status=failed, conversion_id={}'.format(
                 conversion.output_format, conversion.file_instance.location,
                 conversion.id))
             conversion.status = STATUS.failed
             db.session.commit()
-            handle_conversion_completion(conversion, STATUS.failed)
+            handle_conversion_completion.apply_async(
+                (conversion, STATUS.failed), queue='post_handler')
 
     request_fetcher.delay()
 
@@ -95,7 +96,7 @@ def document_converter(request_ids):
 def post_handler(url, data):
     send_postback(url, data)
 
-@app.task
+
 def remote_upload_handler(file_manager_obj, conversion_id):
     conversion = Conversion.query.get(conversion_id)
     file_manager_obj.set_remote_destination(conversion.get_remote_location())
@@ -105,10 +106,12 @@ def remote_upload_handler(file_manager_obj, conversion_id):
     file_manager_obj.remove_output_file()
     log.info('Sending postback for file={}, conversion_id={}'.format(
         conversion.file_instance.location, conversion.id))
-    handle_conversion_completion(conversion, STATUS.completed)
+
+    handle_conversion_completion.apply_async((conversion, STATUS.completed),
+                                             queue='post_handler')
 
 
-@log_execution_time('conversion_complete')
+@app.task
 def handle_conversion_completion(conversion=None, status=None):
     if not conversion or not status:
         return None
