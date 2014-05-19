@@ -1,6 +1,5 @@
 import os
 import json
-import logging
 from file_manager import get_signed_url
 from celery import Celery
 import requests
@@ -11,12 +10,12 @@ JSON_HEADERS = {
 }
 
 from models import db
-from models import Conversion, STATUS
-
-from converters.document_converter import convert
-from file_manager import FileManager
-
 from logger import log
+from file_manager import FileManager
+from models import Conversion, STATUS
+from utils import log_execution_time
+from converters.document_converter import convert
+
 
 db.create_scoped_session()
 
@@ -109,6 +108,7 @@ def remote_upload_handler(file_manager_obj, conversion_id):
     handle_conversion_completion(conversion, STATUS.completed)
 
 
+@log_execution_time('conversion_complete')
 def handle_conversion_completion(conversion=None, status=None):
     if not conversion or not status:
         return None
@@ -126,6 +126,7 @@ def handle_conversion_completion(conversion=None, status=None):
     send_postback(callback, output)
 
 
+@log_execution_time('get_request_dict')
 def get_dictionary_request(conversion):
     return {
         'status': TEXT_STATUS[conversion.status],

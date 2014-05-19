@@ -4,7 +4,7 @@ sys.path.append('..')
 
 from logger import log
 from general import GeneralConverter
-from utils import rename_filename_with_extension
+from utils import rename_filename_with_extension, log_execution_time
 CONVERTER_LOCATION = '''pdf2htmlEX --fit-width 780 --process-outline=0 \
 --dest-dir {output_file_dir} {input_file_path}'''
 
@@ -19,6 +19,7 @@ class PdfHtml(GeneralConverter):
                                       final_format='html',
                                       input_file_objects=input_file_objects)
 
+    @log_execution_time('pdf_to_html')
     def _single_convert(self, input_file_object):
         if input_file_object:
             input_file = input_file_object.get_input_file_path()
