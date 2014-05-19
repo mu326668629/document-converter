@@ -44,7 +44,7 @@ class HtmlPdf(GeneralConverter):
                 input_file_path=intermediate_path,
                 output_file_path=output_file_path)
 
-            self.execute()
+            self.execute(converter)
             if os.path.isfile(output_file_path):
                 return output_file_path
 
