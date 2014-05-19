@@ -5,16 +5,15 @@ sys.path.append('..')
 from logger import log
 from general import GeneralConverter
 from utils import rename_filename_with_extension
-from config import UPLOAD_FOLDER
-
 CONVERTER_LOCATION = '''pdf2htmlEX --fit-width 780 --process-outline=0 \
-{input_file_path} {output_file_path}'''
+--dest-dir {output_file_dir} {input_file_path}'''
 
 
 class PdfHtml(GeneralConverter):
     """
     This class is for Pdf-Html conversion.
     """
+
     def __init__(self, input_file_objects=[]):
         super(PdfHtml, self).__init__(initial_format='pdf',
                                       final_format='html',
@@ -28,7 +27,7 @@ class PdfHtml(GeneralConverter):
             output_file_path = os.path.join(self.tmp_dir, output_file_name)
 
             converter = CONVERTER_LOCATION.format(
-                input_file_path=input_file, output_file_path=output_file_path)
+                input_file_path=input_file, output_file_dir=self.tmp_dir)
 
             self.execute(converter)
 
@@ -37,5 +36,5 @@ class PdfHtml(GeneralConverter):
             else:
                 self.handle_failed_conversion(input_file_object)
 
-        log.error('Conversion failed from PDF => HTML')
+                log.error('Conversion failed from PDF => HTML')
         return None
