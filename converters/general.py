@@ -26,7 +26,7 @@ class GeneralConverter(object):
 
         self.initial_format = initial_format
         self.final_format = final_format
-        self.file_batch = input_files_objects
+        self.file_batch = input_file_objects
 
     def convert(self):
         return [self._single_convert(input_file_object)
